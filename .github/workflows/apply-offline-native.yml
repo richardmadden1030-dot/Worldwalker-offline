@@ -29,8 +29,16 @@ jobs:
       - name: Reconstruct and apply reviewed Offline Mode patch
         shell: bash
         run: |
-          cat tools/offline-patch.part00 tools/offline-patch.part01 tools/offline-patch.part02 tools/offline-patch.part03 | base64 -d > /tmp/offline-native.patch.gz
+          echo '1dfefd9aa5be4d0547f67c14716278e5cde1286585d6656499ebef92d075729d  tools/offline-patch.part00' | sha256sum -c -
+          echo '50a6f1c4c6f8595a47272e48b903a2d411cb46843aa54f5df6ed9d98229e3753  tools/offline-patch.part01' | sha256sum -c -
+          echo '2dfb3dd3f8c7e170cece24729089ae28cb6fc66dd358a5549e4b9f358dc15116  tools/offline-patch.part02' | sha256sum -c -
+          echo 'ee80e665cd6a67858875a648e98ae44710c7d4336609eecb213ded9c5f733580  tools/offline-patch.part03' | sha256sum -c -
+          cat tools/offline-patch.part00 tools/offline-patch.part01 tools/offline-patch.part02 tools/offline-patch.part03 > /tmp/offline-native.b64
+          echo '22839be2c5f95976ec9cdb1bf7f86518db92aab3291547585163121c4d113b5b  /tmp/offline-native.b64' | sha256sum -c -
+          base64 -d /tmp/offline-native.b64 > /tmp/offline-native.patch.gz
+          echo '98d38a969561456bbfb4fe2ff4de5b8a4b851f23b0659d68844a3b07b2319805  /tmp/offline-native.patch.gz' | sha256sum -c -
           gunzip -c /tmp/offline-native.patch.gz > /tmp/offline-native.patch
+          echo 'c815c2a1bc15ed45a394ff54ee02eb64ed7cf31e3c157443ccdefdae341a294f  /tmp/offline-native.patch' | sha256sum -c -
           git apply --check /tmp/offline-native.patch
           git apply /tmp/offline-native.patch
           rm -f tools/offline-patch.part00 tools/offline-patch.part01 tools/offline-patch.part02 tools/offline-patch.part03 .apply-offline-native
