@@ -1,0 +1,74 @@
+name: Rebuild Worldwalker Offline
+
+on:
+  push:
+    paths:
+      - 'offline_bootstrap/**'
+      - '.github/workflows/import-worldwalker.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    if: ${{ !contains(github.event.head_commit.message || '', '[offline-base]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Preserve offline overlay
+        run: |
+          cp -a offline_bootstrap /tmp/offline_bootstrap
+          cp .github/workflows/import-worldwalker.yml /tmp/import-worldwalker.yml
+      - name: Import exact Worldwalker 3.64 web production tree
+        run: |
+          git clone --depth 1 --branch web_prod https://github.com/Dexsidius/WorldWalkerRPG_Webapp.git /tmp/worldwalker-base
+          rsync -a --delete --exclude='.git' /tmp/worldwalker-base/ ./
+          mkdir -p .github/workflows
+          cp /tmp/import-worldwalker.yml .github/workflows/import-worldwalker.yml
+          cp -a /tmp/offline_bootstrap ./offline_bootstrap
+      - name: Apply Offline Mode overlay
+        run: python offline_bootstrap/apply_offline_mode.py .
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flask cryptography pillow pytest playwright
+          python -m playwright install --with-deps chromium
+      - name: Syntax checks
+        run: |
+          python -m py_compile backend/offline_mode.py backend/app.py backend/engine_core.py
+          node --check frontend/js/offline-mode.js
+          node --check frontend/js/app.js
+          node --check frontend/js/action-deck.js
+      - name: Offline Mode regression suite
+        env:
+          PYTHONPATH: backend
+          WORLDWALKER_DATA_DIR: ${{ github.workspace }}/.offline-test-data
+        run: pytest -q tests/test_offline_mode.py tests/test_living_adventures.py tests/test_v364_systems.py tests/test_v364_membership_truth.py
+      - name: Full Worldwalker reliability suite
+        env:
+          PYTHONPATH: backend
+          WORLDWALKER_DATA_DIR: ${{ github.workspace }}/.offline-test-data
+        run: pytest -q tests tools/check_workspace_tabs.py tools/check_reliability_browser.py tools/check_adventures_browser.py
+      - name: Commit reviewed offline build
+        run: |
+          rm -rf .offline-test-data
+          git config user.name 'Worldwalker Offline Builder'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m 'Rebase Offline Mode on Worldwalker 3.64 [offline-base]'
+            git push
+          fi
+      - name: Package tested source
+        run: |
+          rm -rf .git .offline-test-data
+          zip -qr /tmp/worldwalker-offline-reviewed.zip . -x 'qa/*'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: worldwalker-offline-reviewed
+          path: /tmp/worldwalker-offline-reviewed.zip
+          retention-days: 7
