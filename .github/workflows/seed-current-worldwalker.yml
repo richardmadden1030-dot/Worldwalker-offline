@@ -1,0 +1,48 @@
+name: Seed current Worldwalker baseline
+
+on:
+  push:
+    paths:
+      - ".seed-worldwalker"
+
+permissions:
+  contents: write
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout offline target
+        uses: actions/checkout@v4
+        with:
+          path: target
+          fetch-depth: 0
+
+      - name: Checkout exact current Worldwalker mirror
+        uses: actions/checkout@v4
+        with:
+          repository: Dexsidius/WorldWalkerRPG_Webapp
+          ref: web_prod
+          path: source
+          fetch-depth: 1
+
+      - name: Replace prototype with current Worldwalker source
+        shell: bash
+        run: |
+          rsync -a --delete --exclude='.git' source/ target/
+          printf '%s\n' '3feb85a7742a8c9c9174c7e4d85c8917b27c2c19' > target/OFFLINE_BASELINE
+          rm -f target/.seed-worldwalker
+
+      - name: Commit seeded baseline
+        working-directory: target
+        shell: bash
+        run: |
+          git config user.name "worldwalker-offline-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Seed offline fork from current Worldwalker 3.64 baseline"
+          git push origin HEAD:main
