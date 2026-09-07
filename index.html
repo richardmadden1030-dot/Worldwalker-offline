@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101824">
+  <title>Worldwalker Offline</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">W</div>
+        <div><strong>WORLDWALKER</strong><span>OFFLINE</span></div>
+      </div>
+      <div class="status-strip">
+        <span class="offline-pill"><i></i> 100% OFFLINE</span>
+        <span id="world-label">No campaign</span>
+        <span id="clock-label">—</span>
+      </div>
+      <nav class="surface-nav" id="surface-nav" hidden>
+        <button data-surface="world" class="active">WORLD</button><button data-surface="character">CHARACTER</button><button data-surface="atlas">ATLAS</button><button data-surface="journal">JOURNAL</button>
+      </nav>
+      <button id="btn-settings" class="icon-btn" aria-label="Open game menu">☰</button>
+    </header>
+
+    <main id="start-screen" class="start-screen">
+      <section class="hero-panel">
+        <p class="eyebrow">FULL OFFLINE RPG · BUILD 0.5</p>
+        <h1>A world you play,<br><em>not a prompt you wait on.</em></h1>
+        <p class="hero-copy">Worldwalker rebuilt around local systems: world-native progression, persistent powers and forms, contextual roleplay, Storylets, quests, combat, exploration, expeditions, crafting, relationships and hidden discoveries. No API. No server. No internet.</p>
+        <div class="feature-row">
+          <div><b>01</b><span>Context Actions</span></div>
+          <div><b>02</b><span>Storylet Director</span></div>
+          <div><b>03</b><span>World Simulation</span></div>
+        </div>
+      </section>
+
+      <section class="creation-card">
+        <div class="section-kicker">NEW CAMPAIGN</div>
+        <label>Character name<input id="new-name" maxlength="32" value="Traveler" autocomplete="off"></label>
+        <label>World<select id="new-world"></select></label>
+        <div id="world-preview" class="world-preview"></div>
+        <label>Background<select id="new-background"></select></label>
+        <label>Power path<select id="new-power"></select></label>
+        <div id="power-preview" class="world-preview"></div>
+        <button id="btn-new-game" class="primary-btn">BEGIN OFFLINE CAMPAIGN</button>
+        <button id="btn-continue" class="secondary-btn" hidden>CONTINUE SAVED CAMPAIGN</button>
+      </section>
+    </main>
+
+    <main id="game-screen" class="game-screen" hidden>
+      <aside class="left-rail">
+        <section class="character-card panel">
+          <div class="avatar" id="avatar-initial">T</div>
+          <div><h2 id="char-name">Traveler</h2><p id="char-role">Wanderer</p></div>
+          <div class="resource-line"><span>HP</span><div class="bar"><i id="hp-bar"></i></div><b id="hp-text">100/100</b></div>
+          <div class="resource-line"><span>EN</span><div class="bar"><i id="energy-bar"></i></div><b id="energy-text">100/100</b></div>
+          <div class="resource-line"><span id="power-resource-label">RES</span><div class="bar power-resource"><i id="power-resource-bar"></i></div><b id="power-resource-text">100/100</b></div>
+          <div class="meta-grid">
+            <div><small>RENOWN</small><strong id="renown-value">0</strong></div>
+            <div><small>CURRENCY</small><strong id="currency-value">0</strong></div>
+            <div><small id="level-label">RANK</small><strong id="level-value">—</strong></div>
+            <div><small id="xp-label">POWER</small><strong id="xp-value">—</strong></div>
+          </div>
+        </section>
+
+        <section class="panel compact-panel">
+          <div class="panel-heading"><h3>Capabilities</h3><span>unlock actions</span></div>
+          <div id="capability-list" class="tag-list"></div>
+        </section>
+
+        <section class="panel compact-panel">
+          <div class="panel-heading"><h3>Relationships</h3><span>local state</span></div>
+          <div id="relationship-list" class="mini-list"></div>
+        </section>
+      </aside>
+
+      <section class="world-stage">
+        <div class="location-hero panel">
+          <div>
+            <p class="eyebrow" id="location-region">REGION</p>
+            <h1 id="location-name">Location</h1>
+            <p id="location-description"></p>
+          </div>
+          <div class="location-facts">
+            <div><small>DAY</small><b id="day-value">1</b></div>
+            <div><small>TIME</small><b id="time-value">08:00</b></div>
+            <div><small>DANGER</small><b id="danger-value">Low</b></div>
+          </div>
+        </div>
+
+        <section class="panel action-panel">
+          <div class="panel-heading action-heading">
+            <div><p class="eyebrow">WHAT DO YOU DO?</p><h2>Context Actions</h2></div>
+            <div class="action-filter" id="action-filter"></div>
+          </div>
+          <div id="action-grid" class="action-grid"></div>
+          <div id="action-empty" class="empty-state" hidden>No actions are available right now.</div>
+        </section>
+
+        <section class="panel chronicle-panel">
+          <div class="panel-heading"><h3>Chronicle</h3><button id="btn-clear-log" class="text-btn">Clear display</button></div>
+          <div id="chronicle" class="chronicle"></div>
+        </section>
+      </section>
+
+      <aside class="right-rail">
+        <section class="panel opportunity-panel">
+          <div class="panel-heading"><h3>Opportunities</h3><span id="opportunity-count">0 active</span></div>
+          <div id="opportunity-list" class="card-list"></div>
+        </section>
+
+        <section class="panel quest-panel">
+          <div class="panel-heading"><h3>Quest Board</h3><button id="btn-refresh-quests" class="text-btn">Review</button></div>
+          <div id="quest-board" class="card-list"></div>
+        </section>
+
+        <section class="panel active-quest-panel">
+          <div class="panel-heading"><h3>Active Quests</h3><span id="active-quest-count">0/3</span></div>
+          <div id="active-quests" class="card-list"></div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <div id="storylet-modal" class="modal-backdrop" hidden>
+    <article class="storylet-modal">
+      <div class="storylet-art"><span id="storylet-symbol">✦</span></div>
+      <div class="storylet-content">
+        <p class="eyebrow" id="storylet-type">WORLD EVENT</p>
+        <h2 id="storylet-title">Event</h2>
+        <p id="storylet-body"></p>
+        <div id="storylet-context" class="storylet-context"></div>
+        <div id="storylet-choices" class="storylet-choices"></div>
+      </div>
+    </article>
+  </div>
+
+  <div id="menu-modal" class="modal-backdrop" hidden>
+    <article class="menu-modal">
+      <div class="panel-heading"><h2>Game Menu</h2><button id="btn-close-menu" class="icon-btn">×</button></div>
+      <p class="offline-note"><b>Offline guarantee:</b> this build contains no fetch, XHR, WebSocket, API client, analytics, or remote assets. Your campaign is stored only in this browser.</p>
+      <div class="menu-buttons">
+        <button id="btn-export" class="secondary-btn">EXPORT SAVE</button>
+        <label class="secondary-btn file-button">IMPORT SAVE<input id="import-file" type="file" accept="application/json" hidden></label>
+        <button id="btn-return-title" class="secondary-btn">RETURN TO TITLE</button>
+        <button id="btn-reset" class="danger-btn">DELETE CAMPAIGN</button>
+      </div>
+      <div class="debug-summary" id="debug-summary"></div>
+    </article>
+  </div>
+
+  <div id="surface-modal" class="modal-backdrop surface-backdrop" hidden>
+    <article class="surface-modal">
+      <div class="panel-heading"><div><p class="eyebrow" id="surface-kicker">WORLDWALKER</p><h2 id="surface-title">Character</h2></div><button id="btn-close-surface" class="icon-btn">×</button></div>
+      <div id="surface-content" class="surface-content"></div>
+    </article>
+  </div>
+
+  <div id="combat-modal" class="modal-backdrop" hidden>
+    <article class="combat-modal">
+      <header class="combat-head"><div><p class="eyebrow">TACTICAL ENCOUNTER</p><h2 id="combat-enemy">Enemy</h2><p id="combat-objective"></p></div><div class="combat-round" id="combat-round">ROUND 1</div></header>
+      <div class="combat-bars"><div><span>YOU</span><div class="bar"><i id="combat-player-hp"></i></div><b id="combat-player-hp-text"></b></div><div><span id="combat-enemy-name">ENEMY</span><div class="bar enemy"><i id="combat-enemy-hp"></i></div><b id="combat-enemy-hp-text"></b></div></div>
+      <div class="range-lane"><span>CLOSE</span><span>MID</span><span>FAR</span><i id="range-marker"></i></div>
+      <div id="combat-form-row" class="form-row"></div>
+      <div id="combat-actions" class="combat-actions"></div>
+      <div id="combat-log" class="combat-log"></div>
+    </article>
+  </div>
+
+  <div id="reward-modal" class="modal-backdrop" hidden>
+    <article class="reward-modal"><p class="eyebrow">MILESTONE REWARD</p><h2 id="reward-reason">Choose your reward</h2><p>Keep one. The other opportunities pass.</p><div id="reward-choices" class="reward-choices"></div></article>
+  </div>
+
+  <div id="utility-modal" class="modal-backdrop" hidden>
+    <article class="menu-modal wide-modal"><div class="panel-heading"><h2 id="utility-title">World Service</h2><button id="btn-close-utility" class="icon-btn">×</button></div><div id="utility-content"></div></article>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/progression.js"></script>
+  <script src="js/powers.js"></script>
+  <script src="js/systems.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
