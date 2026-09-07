@@ -41,10 +41,11 @@ def test_rest_and_training_use_existing_worldwalker_resolution(tmp_path,world):
 def test_offline_catalog_categorizes_364_system_extensions_when_available(tmp_path,world):
     g=make_game(tmp_path,world);opening(g);c=catalog(g)
     for row in c['actions']:
-        if row['id'].startswith('path:'):assert row['category']=='training'
-        if row['id'].startswith(('property:','craft:')):assert row['category']=='property'
-        if row['id'].startswith('expedition:'):assert row['category']=='missions'
-        if row['id'].startswith(('conflict:','reputation:')):assert row['category']=='world'
+        category=row.get('original_category') if row.get('category')=='recommended' else row.get('category')
+        if row['id'].startswith('path:'):assert category=='training'
+        if row['id'].startswith(('property:','craft:')):assert category=='property'
+        if row['id'].startswith('expedition:'):assert category=='missions'
+        if row['id'].startswith(('conflict:','reputation:')):assert category=='world'
 
 def test_social_farming_is_bounded_and_returned_state_is_current(tmp_path):
     g=make_game(tmp_path,'Naruto');opening(g);place=g.state['location'];name='Local Friend'
@@ -58,10 +59,12 @@ def test_active_combat_blocks_time_advancing_offline_actions(tmp_path):
     g=make_game(tmp_path,'Naruto');opening(g)
     g.state['combat']={'active':True,'enemy':{'name':'Test','hp':10,'hp_max':10,'power':10}}
     c=catalog(g)
-    assert not any(a['id'].startswith(('rest:','train:','mission:','offline:travel:')) for a in c['actions'])
+    assert not any(a['id'].startswith(('rest:','train:','mission:','offline:travel:','offline:social:')) for a in c['actions'])
     assert any(a['id']=='offline:navigate:combat' for a in c['actions'])
+    with pytest.raises(ValueError):resolve_action(g,{'id':'rest:60'})
 
 def test_frontend_offline_layer_hides_freeform_and_service_worker_caches_it():
     js=(ROOT/'frontend/js/offline-mode.js').read_text();html=(ROOT/'frontend/index.html').read_text();sw=(ROOT/'frontend/sw.js').read_text()
     assert 'composer.hidden=true' in js and 'time.hidden=true' in js
+    assert '.action-deck-side' in js
     assert '/js/offline-mode.js' in html and '/js/offline-mode.js' in sw
