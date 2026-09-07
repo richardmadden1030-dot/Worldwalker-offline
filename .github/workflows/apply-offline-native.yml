@@ -1,0 +1,58 @@
+name: Apply and review native Offline Mode
+
+on:
+  push:
+    branches: [offline-mode/native-worldwalker]
+    paths:
+      - '.apply-offline-native'
+
+permissions:
+  contents: write
+
+jobs:
+  review-and-apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      WORLDWALKER_DATA_DIR: ${{ github.workspace }}/.build-test-data
+      PYTHONPATH: backend:tests:tools
+      PYTHONUTF8: '1'
+      WORLDWALKER_ADVENTURE_SCREENSHOT: ${{ github.workspace }}/qa/living-adventures.png
+      WORLDWALKER_QA_SCREENSHOT: ${{ github.workspace }}/qa/workspace.png
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Reconstruct and apply reviewed Offline Mode patch
+        shell: bash
+        run: |
+          cat tools/offline-patch.part00 tools/offline-patch.part01 tools/offline-patch.part02 tools/offline-patch.part03 | base64 -d > /tmp/offline-native.patch.gz
+          gunzip -c /tmp/offline-native.patch.gz > /tmp/offline-native.patch
+          git apply --check /tmp/offline-native.patch
+          git apply /tmp/offline-native.patch
+          rm -f tools/offline-patch.part00 tools/offline-patch.part01 tools/offline-patch.part02 tools/offline-patch.part03 .apply-offline-native
+      - name: Install full regression dependencies
+        run: python -m pip install flask cryptography pillow pytest playwright
+      - name: Install Chromium
+        run: python -m playwright install --with-deps chromium
+      - name: Check JavaScript syntax
+        shell: bash
+        run: |
+          for file in frontend/js/*.js frontend/sw.js frontend/tactical/campaign.js; do node --check "$file"; done
+      - name: Run native Offline Mode tests
+        run: python -m pytest tests/test_offline_mode_native.py -q
+      - name: Run complete Worldwalker regressions and real UI harnesses
+        run: |
+          mkdir -p qa
+          python -m pytest tests tools/check_workspace_tabs.py tools/check_reliability_browser.py tools/check_adventures_browser.py -q --junitxml=qa/offline-results.xml
+      - name: Commit only after the review suite passes
+        shell: bash
+        run: |
+          git config user.name 'worldwalker-offline-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -A -- . ':!.github/workflows'
+          git commit -m 'Implement native model-free Offline Mode'
+          git push origin HEAD:offline-mode/native-worldwalker
