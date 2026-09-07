@@ -1,0 +1,28 @@
+name: Offline source export
+
+on:
+  push:
+    branches:
+      - offline-mode/native-worldwalker
+    paths:
+      - ".github/workflows/offline-source-export.yml"
+      - ".export-offline-source"
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Package source snapshot
+        shell: bash
+        run: |
+          rm -rf .git
+          zip -qr ../worldwalker-offline-source.zip .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: worldwalker-offline-source
+          path: ../worldwalker-offline-source.zip
+          retention-days: 1
