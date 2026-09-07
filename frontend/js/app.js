@@ -195,6 +195,7 @@ const APP = {
   soundEnabled: true,
   musicEnabled: true,
   animationsEnabled: true,
+  offlineMode: true,
   music: { world: "", tracks: [], index: 0, userStarted: false },
   musicVolume: 0.35,
   multiplayer: null,
@@ -1580,6 +1581,7 @@ function renderActiveFormPanel(s) {
 }
 
 async function ensureAiPortrait(s, force = false) {
+  if (APP.offlineMode) return;
   if (!s || !APP.campaignActive || !s._portrait_generation_enabled || !s._portrait_generation_ready) return;
   const signature = s._portrait_signature;
   if (!signature || APP.portraitInFlight || (!force && (s._portrait_generated || APP.portraitAttempted.has(signature)))) return;
@@ -3425,7 +3427,7 @@ $("#btn-retry-opening").addEventListener("click", async () => {
   if (!APP.campaignActive) { openModal("modal-campaign"); return; }
   setBusy(true);
   try {
-    const result = await apiPost("/api/campaign/opening", {});
+    const result = await apiPost(APP.offlineMode ? "/api/offline/opening" : "/api/campaign/opening", {});
     removeOpeningSetupNotice();
     appendStoryEntries(result.story);
     renderState(result.state);
@@ -3521,6 +3523,7 @@ syncTimeControl("#td-unit", "#td-amount", "#td-amount-field");
 
 $("#btn-advance").addEventListener("click", async () => {
   if (APP.busy || !APP.campaignActive) return;
+  if (APP.offlineMode) { openActionDeck(); return; }
   playNarutoAdvanceCue();
   const draft = $("#action-input").value.trim();
   if (draft) await submitAction(draft);
@@ -5826,12 +5829,13 @@ $("#btn-confirm-campaign").addEventListener("click", async () => {
     closeModal("modal-campaign-preview"); closeModal("modal-campaign"); closeModal("modal-welcome");
     $("#scene-title").textContent = "OPENING SCENE";
     try {
-      const opening = await apiPost("/api/campaign/opening", {});
+      const opening = await apiPost(APP.offlineMode ? "/api/offline/opening" : "/api/campaign/opening", {});
       appendStoryEntries(opening.story); renderState(opening.state);
       maybeShowOnboarding();
+      if (APP.offlineMode) setTimeout(() => openActionDeck(), 250);
     } catch (error) {
-      appendStoryEntries([{ text: "[AI SETUP REQUIRED]\nYour fresh campaign was created. Select a model in AI & Portrait Setup, then click RETRY OPENING.", tag: "system" }]);
-      $("#hdr-ai").textContent = "AI: MODEL NOT SELECTED";
+      appendStoryEntries([{ text: APP.offlineMode ? "[OFFLINE MODE]\nThe campaign was created, but the local opening could not initialize: " + error.message : "[AI SETUP REQUIRED]\nYour fresh campaign was created. Select a model in AI & Portrait Setup, then click RETRY OPENING.", tag: "system" }]);
+      $("#hdr-ai").textContent = APP.offlineMode ? "OFFLINE MODE" : "AI: MODEL NOT SELECTED";
     }
   } catch (error) { showToast(error.message, "danger"); }
   finally { APP.deferPortraitGeneration = false; setBusy(false); APP.pendingCampaign = null; if (APP.state) ensureAiPortrait(APP.state); }
@@ -6149,6 +6153,7 @@ async function refreshHeaderAiStatus() {
 }
 
 function aiStatusLabel(st) {
+  if (st.offline_mode || APP.offlineMode) return "OFFLINE MODE";
   if (st.ai_ready) return "AI: READY";
   if (st.ai_connection_status === "invalid") return "AI: CONNECTION INVALID";
   return st.ai_connection_status === "untested" ? "AI: READY TO TEST" : "AI: MODEL NOT SELECTED";
@@ -6648,9 +6653,16 @@ async function finishGameBoot() {
   APP.musicVolume = Number(settings.music_volume ?? .35);
   setMusicWidgetVolume(APP.musicVolume, false);
   APP.animationsEnabled = !!settings.animations_enabled;
+  APP.offlineMode = settings.offline_mode !== false || !!st.offline_mode;
+  document.body.classList.toggle("offline-mode", APP.offlineMode);
   APP.campaignActive = st.campaign_active;
   renderState(st.state);
   $("#hdr-ai").textContent = aiStatusLabel(st);
+  if (APP.offlineMode) {
+    const advance = $("#btn-advance"); if (advance) advance.textContent = "ACTIVITIES";
+    const trigger = $("#btn-action-deck");
+    if (trigger) { trigger.querySelector("b").textContent = "ACTIVITIES"; trigger.querySelector("small").textContent = "Roleplay, training, travel, missions, people, combat and world actions"; }
+  }
   if (st.campaign_active) {
     $("#story-feed").innerHTML = "";
     const multiplayerState = st.state?._multiplayer;

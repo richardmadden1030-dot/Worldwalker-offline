@@ -21,9 +21,10 @@ from engine_social import SocialMixin
 from engine_persistence import PersistenceMixin
 from engine_journal import JournalMixin
 from combat import CombatMixin
+from offline_mode import OfflineMixin
 
 
-class GameSession(CombatMixin, CampaignMixin, TurnsMixin, TimeSkipMixin, SocialMixin,
+class GameSession(OfflineMixin, CombatMixin, CampaignMixin, TurnsMixin, TimeSkipMixin, SocialMixin,
                    PersistenceMixin, JournalMixin, CoreMixin):
     """The full game engine. See the module docstring for how this is assembled."""
     pass

@@ -878,9 +878,9 @@ def api_campaign_opening():
 @app.route("/api/state")
 def api_state():
     return jsonify({"state": request_public_state(), "busy": game.busy, "campaign_active": game.campaign_active,
-                     "tactical_story":game.story_log[-300:] if tactical_feature_enabled() and game.state.get('world') in {'Naruto','One Piece','Bleach'} and not getattr(g,'worldwalker_room',None) else [],
+                     "tactical_story":game.story_log[-300:] if (game.offline_enabled() or (tactical_feature_enabled() and game.state.get('world') in {'Naruto','One Piece','Bleach'})) and not getattr(g,'worldwalker_room',None) else [],
                      "ai_ready": game.ai_ready(), "ai_connection_status": game.settings.get("ai_connection_status", "untested"),
-                     "local_mode": game.local_mode()})
+                     "local_mode": game.local_mode(), "offline_mode": game.offline_enabled()})
 
 
 @app.route("/api/action/submit", methods=["POST"])
@@ -1711,6 +1711,30 @@ def api_quick_action():
     except Exception as e:
         return err(e, 400)
 
+
+@app.route("/api/offline/opening", methods=["POST"])
+def api_offline_opening():
+    if not game.campaign_active:
+        return jsonify({"error": "Start or load a campaign first."}), 400
+    try:
+        return jsonify(game.offline_opening())
+    except Exception as e:
+        return err(e, 400)
+
+
+@app.route("/api/offline/activity", methods=["POST"])
+def api_offline_activity():
+    if getattr(g, "worldwalker_room", None):
+        return jsonify({"error": "Offline Activities are single-player only."}), 409
+    if not acquire_busy():
+        return busy_error()
+    try:
+        return jsonify(game.resolve_offline_activity(request.get_json(force=True) or {}))
+    except Exception as e:
+        return err(e, 400)
+    finally:
+        release_busy()
+
 # ---------- settings ----------
 @app.route("/api/music")
 def api_music():
@@ -1857,7 +1881,7 @@ def api_settings_post():
         "max_ai_cost_per_request_usd", "max_ai_cost_per_turn_usd", "max_ai_retries_per_turn", "session_budget_warning_usd",
         "narration", "autosave", "sound_enabled", "music_enabled", "music_volume", "animations_enabled",
         "portrait_generation_enabled", "portrait_auto_generate", "image_model", "image_provider", "local_image_base_url", "local_image_model", "portrait_quality", "developer_mode",
-        "onboarding_seen", "simulation_mode", "canon_foreknowledge", "local_reentry_recap", "local_combat_recap", "local_message_gate"
+        "onboarding_seen", "simulation_mode", "canon_foreknowledge", "local_reentry_recap", "local_combat_recap", "local_message_gate", "offline_mode"
     ] if k in d}
     settings_game = getattr(g, "worldwalker_personal_game", None) or game
     if any(key in patch for key in ("provider", "local_base_url", "local_token", "api_key", "model", "secondary_model", "major_event_model", "advisor_model", "advisor_provider", "creative_model", "creative_provider")):

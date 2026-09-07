@@ -999,6 +999,8 @@ class CombatMixin:
             narrative += " " + notification + "."
         combat["narrated_through"] = len(combat.get("log", []))
         if not combat.get("active"):
+            import copy
+            self.state["last_combat"] = copy.deepcopy(combat)
             self.state["combat"] = {}
         self.append("[COMBAT RESULT]\n" + narrative, "narrative")
         self.autosave()

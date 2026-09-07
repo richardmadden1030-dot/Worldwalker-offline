@@ -1,11 +1,11 @@
-const CACHE = "worldwalker-v3640-membership-truth-1";
+const CACHE = "worldwalker-v3640-offline-native-1";
 const SHELL = [
   "/js/world-calendar.js?v=3.64.0-membership-truth-1", "/js/living-adventures.js?v=3.64.0-membership-truth-1",
   "/css/living-adventures.css?v=3.64.0-membership-truth-1",
-  "/js/api-client.js?v=3.64.0-membership-truth-1", "/js/roster-sync.js?v=3.64.0-membership-truth-1", "/js/team-membership.js?v=3.64.0-membership-truth-1", "/js/action-deck.js?v=3.64.0-membership-truth-1",
+  "/js/api-client.js?v=3.64.0-membership-truth-1", "/js/roster-sync.js?v=3.64.0-membership-truth-1", "/js/team-membership.js?v=3.64.0-membership-truth-1", "/js/action-deck.js?v=3.64.0-offline-native-1",
   "/css/compact-workspace.css?v=3.64.0-membership-truth-1",
   "/js/turn-feedback.js?v=3.64.0-membership-truth-1", "/css/turn-feedback.css?v=3.64.0-membership-truth-1",
-  "/", "/css/style.css?v=3.64.0-membership-truth-1", "/js/app.js?v=3.64.0-membership-truth-1", "/css/world-atlas.css?v=3.64.0-membership-truth-1&revision=2", "/js/world-atlas.js?v=3.64.0-membership-truth-1", "/js/workspace-tabs.js?v=3.64.0-membership-truth-1", "/manifest.webmanifest",
+  "/", "/css/style.css?v=3.64.0-offline-native-1", "/js/app.js?v=3.64.0-offline-native-1", "/css/world-atlas.css?v=3.64.0-membership-truth-1&revision=2", "/js/world-atlas.js?v=3.64.0-membership-truth-1", "/js/workspace-tabs.js?v=3.64.0-membership-truth-1", "/manifest.webmanifest",
   "/assets/branding/worldwalker-emblem.png", "/cursors/naruto-kunai.svg", "/cursors/naruto-shuriken.svg",
   "/cursors/bleach-zanpakuto.svg", "/cursors/jjk-sukuna-finger.svg", "/cursors/one-piece-strawhat-jolly-roger.svg", "/fonts/nova-square.ttf"
 ];

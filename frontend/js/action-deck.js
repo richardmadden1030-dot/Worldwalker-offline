@@ -48,6 +48,7 @@ function actionDeckLocations(state = APP.state || {}) {
   const custom = Array.isArray(state.custom_locations) ? state.custom_locations : Object.values(state.custom_locations || {});
   custom.forEach((row) => names.add(typeof row === "object" ? row.name : row));
   (Array.isArray(state.travel_history) ? state.travel_history : []).forEach((row) => names.add(typeof row === "object" ? (row.destination || row.to || row.location) : row));
+  (Array.isArray(state.offline_mode?.travel_options) ? state.offline_mode.travel_options : []).forEach((name) => names.add(name));
   names.delete(state.location);
   names.delete(undefined); names.delete("");
   return [...names].slice(0, 8);
@@ -128,11 +129,30 @@ function worldActionChoices(state = APP.state || {}) {
     ["custom-research", "Study the world", "Learn more about local rules, history, factions and threats.", "Research the world and my current surroundings"],
   ]).map(([id, label, description, text]) => actionChoice(id, "world", label, description, text));
 }
+function offlineInjectedChoices(state = APP.state || {}) {
+  if (!APP.offlineMode) return [];
+  const rows = [];
+  const offline = state.offline_mode || {};
+  const event = offline.pending_event;
+  if (event && Array.isArray(event.choices)) {
+    event.choices.forEach((choice) => rows.push(actionChoice(
+      `offline-event:${event.id}:${choice.id}`, "recommended", choice.label,
+      `${event.title}: ${event.text}`, choice.label, { offlineEvent: true, duration: "moment" }
+    )));
+  }
+  (Array.isArray(offline.mission_offers) ? offline.mission_offers : []).forEach((offer) => rows.push(actionChoice(
+    `offline-accept:${offer.id}`, "missions", `Accept: ${offer.title || offer.name}`,
+    `${humanLabel(offer.archetype || "assignment")} · ${offer.destination || state.location || "local"} · Reward ${offer.reward || 0}`,
+    offer.title || offer.name, { duration: "moment", missionOffer: true }
+  )));
+  return rows;
+}
+
 function buildActionDeckChoices(state = APP.state || {}, personName = "") {
   const people = actionDeckPeople(state);
   const person = personName ? people.find((row) => normalizePersonName(row.name) === normalizePersonName(personName)) || { name: personName } : null;
   if (person) return personInteractionChoices(person, state);
-  const choices = [];
+  const choices = [...offlineInjectedChoices(state)];
   (state.suggested_actions || []).slice(0, 5).forEach((text, index) => choices.push(actionChoice(`suggested:${index}:${text}`, "recommended", text, "Suggested from the current scene and campaign state.", text)));
   const hpRatio = Number(state.hp || 0) / Math.max(1, Number(state.hp_max || 1));
   choices.push(actionChoice("personal-rest", "personal", hpRatio < .75 ? "Rest and recover" : "Take a proper rest", "Recover from exertion and allow ordinary needs to be addressed.", "Rest and recover properly", { duration: "hour" }));
@@ -189,6 +209,12 @@ function renderActionDeckMiniList(selector, rows, emptyText) {
 function renderActionDeck() {
   const state = APP.state || {};
   const choices = buildActionDeckChoices(state, actionDeckPerson);
+  const title = document.querySelector("#action-deck-title");
+  if (title) title.textContent = APP.offlineMode ? "Activities" : "Choose an action";
+  const write = document.querySelector("#action-deck-write");
+  if (write) write.hidden = !!APP.offlineMode;
+  const modal = document.querySelector("#modal-action-deck");
+  if (modal) modal.classList.toggle("offline-activities", !!APP.offlineMode);
   const activeCategory = actionDeckPerson ? "people" : actionDeckCategory;
   const categories = $("#action-deck-categories");
   categories.hidden = Boolean(actionDeckPerson);
@@ -202,7 +228,7 @@ function renderActionDeck() {
   } else {
     personBox.hidden = true;
     personBox.replaceChildren();
-    $("#action-deck-context").textContent = `${state.location || "Current location"}. ${state.world || "Current world"}`;
+    $("#action-deck-context").textContent = APP.offlineMode ? `${state.location || "Current location"} · Choose what to do next` : `${state.location || "Current location"}. ${state.world || "Current world"}`;
   }
   const filtered = choices.filter((row) => row.category === activeCategory).slice(0, actionDeckPerson ? 12 : 10);
   const favorites = readActionDeckStore("favorites");
@@ -224,8 +250,12 @@ function openActionDeck(personName = "") {
   renderActionDeck();
   openModal("modal-action-deck");
 }
-function placeActionInComposer(action) {
+async function placeActionInComposer(action) {
   if (!action) return;
+  if (APP.offlineMode) {
+    await resolveOfflineActivity(action);
+    return;
+  }
   const duration = actionDeckDurationTouched ? ($("#action-deck-duration").value || "moment") : (action.duration || "moment");
   const text = actionTextWithDuration(action, duration);
   const input = $("#action-input");
@@ -238,6 +268,39 @@ function placeActionInComposer(action) {
   setMobileView("actions", false);
   input.focus(); input.setSelectionRange(input.value.length, input.value.length);
   showToast("Action added to the composer. Edit it or add it to your plan.", "system");
+}
+
+
+async function resolveOfflineActivity(action) {
+  if (!action || APP.busy) return;
+  const duration = actionDeckDurationTouched ? ($("#action-deck-duration").value || "moment") : (action.duration || "moment");
+  const payload = {
+    id: action.id, label: action.label, category: action.category,
+    person: action.person?.name || actionDeckPerson || action.person || "", duration,
+  };
+  setBusy(true);
+  try {
+    const result = await apiPost("/api/offline/activity", payload);
+    appendStoryEntries(result.story || []);
+    renderState(result.state);
+    const stored = { id: action.id, label: action.label, text: action.text, description: action.description, category: action.category, person: payload.person, duration };
+    writeActionDeckStore("recent", [stored, ...readActionDeckStore("recent").filter((row) => row.id !== stored.id)].slice(0, 8));
+    const effects = Array.isArray(result.result?.effects) ? result.result.effects.filter(Boolean) : [];
+    showToast(effects[0] || `${action.label} resolved offline.`, result.combat_started ? "danger" : "notify");
+    if (result.combat_started) {
+      closeModal("modal-action-deck");
+      return;
+    }
+    if (result.state?.offline_mode?.pending_event) {
+      actionDeckPerson = ""; actionDeckCategory = "recommended"; renderActionDeck();
+      return;
+    }
+    renderActionDeck();
+  } catch (error) {
+    showToast(error.message, "danger");
+  } finally {
+    setBusy(false);
+  }
 }
 
 
