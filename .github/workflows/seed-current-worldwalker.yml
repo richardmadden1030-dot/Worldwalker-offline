@@ -29,7 +29,10 @@ jobs:
       - name: Replace prototype with current Worldwalker source
         shell: bash
         run: |
-          rsync -a --delete --exclude='.git' source/ target/
+          rsync -a --delete \
+            --exclude='.git' \
+            --exclude='.github/workflows/' \
+            source/ target/
           printf '%s\n' '3feb85a7742a8c9c9174c7e4d85c8917b27c2c19' > target/OFFLINE_BASELINE
           rm -f target/.seed-worldwalker
 
