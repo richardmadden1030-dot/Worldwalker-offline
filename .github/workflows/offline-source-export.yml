@@ -20,9 +20,9 @@ jobs:
         shell: bash
         run: |
           rm -rf .git
-          zip -qr ../worldwalker-offline-source.zip .
+          zip -qr worldwalker-offline-source.zip . -x worldwalker-offline-source.zip
       - uses: actions/upload-artifact@v4
         with:
           name: worldwalker-offline-source
-          path: ../worldwalker-offline-source.zip
+          path: worldwalker-offline-source.zip
           retention-days: 1
