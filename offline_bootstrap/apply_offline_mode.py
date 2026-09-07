@@ -5,7 +5,6 @@ boot=root/'offline_bootstrap'
 shutil.copy2(boot/'offline_mode.py',root/'backend/offline_mode.py')
 shutil.copy2(boot/'offline-mode.js',root/'frontend/js/offline-mode.js')
 
-# Offline repo defaults to local structured play while retaining normal save shape.
 p=root/'backend/engine_core.py'; s=p.read_text()
 if '"offline_mode": True' not in s:
     anchor='    "developer_mode": False,\n'
@@ -20,7 +19,7 @@ if '"offline_mode": bool(game.settings.get("offline_mode", True))' not in s:
     s=s.replace(needle,'"offline_mode": bool(game.settings.get("offline_mode", True)),\n                     '+needle,1)
 old='''def api_campaign_opening():\n    if not game.ai_ready():'''
 new='''def api_campaign_opening():\n    if game.settings.get("offline_mode", True):\n        try:\n            from offline_mode import opening as offline_opening\n            return jsonify(offline_opening(game))\n        except Exception as e:\n            return err(e, 400)\n    if not game.ai_ready():'''
-if old in s and new not in s: s=s.replace(old,new,1)
+if old in s and new not in s:s=s.replace(old,new,1)
 settings_anchor='"onboarding_seen", "simulation_mode", "canon_foreknowledge"'
 if '"offline_mode", "onboarding_seen"' not in s:
     if settings_anchor not in s: raise SystemExit('settings whitelist anchor changed')
@@ -36,18 +35,20 @@ p=root/'frontend/index.html'; s=p.read_text()
 if 'offline-mode.js' not in s:
     matches=list(re.finditer(r'(<script src="/js/app\.js\?v=[^"]+"></script>)',s))
     if not matches: raise SystemExit('app.js script tag not found')
-    m=matches[-1]; s=s[:m.end()]+'\n<script src="/js/offline-mode.js?v=offline-mode-1"></script>'+s[m.end():]
+    m=matches[-1];s=s[:m.end()]+'\n<script src="/js/offline-mode.js?v=offline-mode-1"></script>'+s[m.end():]
 p.write_text(s)
 
-p=root/'frontend/css/style.css'; s=p.read_text(); css=(boot/'offline-mode.css').read_text()
-if '/* Offline Mode — same Worldwalker shell' not in s: s+='\n\n'+css+'\n'
+p=root/'frontend/css/style.css';s=p.read_text();css=(boot/'offline-mode.css').read_text()
+if '/* Offline Mode — same Worldwalker shell' not in s:s+='\n\n'+css+'\n'
 p.write_text(s)
 
-p=root/'frontend/sw.js'; s=p.read_text()
+p=root/'frontend/sw.js';s=p.read_text()
 if '/js/offline-mode.js' not in s:
-    s=re.sub(r'("/js/api-client\.js\?v=[^"]+",\s*"/js/action-deck\.js\?v=[^"]+",)',r'\1 "/js/offline-mode.js?v=offline-mode-1",',s,count=1)
-    if '/js/offline-mode.js' not in s: raise SystemExit('service worker shell anchor changed')
-s=re.sub(r'const CACHE = "[^"]+";', 'const CACHE = "worldwalker-offline-v364-1";', s, count=1)
+    # 3.64 may place roster/team scripts between api-client and action-deck.
+    m=re.search(r'("/js/action-deck\.js\?v=[^"]+")',s)
+    if not m:raise SystemExit('service worker action-deck asset not found')
+    s=s[:m.end()]+', "/js/offline-mode.js?v=offline-mode-1"'+s[m.end():]
+s=re.sub(r'const CACHE = "[^"]+";','const CACHE = "worldwalker-offline-v364-1";',s,count=1)
 p.write_text(s)
 
 shutil.copy2(boot/'test_offline_mode.py',root/'tests/test_offline_mode.py')
