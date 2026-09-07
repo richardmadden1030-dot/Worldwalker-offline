@@ -7,7 +7,7 @@ normal Worldwalker. This layer catalogs those actions into a player-friendly
 menu and adds conservative social interactions that are safe to resolve locally.
 """
 from __future__ import annotations
-import copy, hashlib
+import copy
 
 from living_adventures import (action_list, action_spec, available_people,
                                location_node, location_view, resolve, route_options,
@@ -76,6 +76,7 @@ def _navigation_actions(state):
     return rows
 
 def _travel_actions(state):
+    if _obj(state.get("combat")).get("active"): return []
     origin=location_node(state)["name"];graph=build_travel_graph(state);edges=graph.get("edges",{}).get(origin,[]);rows=[]
     for edge in edges[:12]:
         dest=edge.get("to")
@@ -89,10 +90,16 @@ def catalog(game):
     state=game.state
     if not game.campaign_active:return {"offline_mode":enabled(game),"categories":[],"actions":[],"location":""}
     place=location_node(state)["name"]
+    public=game.public_state()
+    if _obj(state.get("combat")).get("active"):
+        actions=_navigation_actions(public)
+        counts={key:sum(1 for r in actions if r.get("category")==key) for key in CATEGORY_META}
+        cats=[{"id":key,"label":label,"description":desc,"count":counts[key]} for key,(label,desc) in CATEGORY_META.items() if counts[key]]
+        return {"offline_mode":enabled(game),"location":place,"world":state.get("world"),"categories":cats,"actions":actions,"location_view":location_view(state,place)}
     base=[_decorate(row) for row in action_list(state,place)]
     people=[]
     for person in available_people(state,place)[:20]:people.extend(_person_actions(state,person))
-    actions=base+people+_travel_actions(state)+_navigation_actions(game.public_state())
+    actions=base+people+_travel_actions(state)+_navigation_actions(public)
     seen=set();dedup=[]
     for row in actions:
         key=(row.get("id"),row.get("label"))
@@ -101,7 +108,8 @@ def catalog(game):
     priority=[]
     for prefixes in (("activity:resume","journey:resume"),("mission:","expedition:"),("rest:",),("train:","path:"),("offline:social:",),("offline:travel:",)):
         match=next((r for r in dedup if any(_text(r.get("id")).startswith(p) for p in prefixes)),None)
-        if match and match not in priority:priority.append({**copy.deepcopy(match),"category":"recommended"})
+        if match and match not in priority:
+            copy_row=copy.deepcopy(match);copy_row["original_category"]=match.get("category");copy_row["category"]="recommended";priority.append(copy_row)
         if len(priority)>=5:break
     all_actions=priority+dedup
     counts={key:sum(1 for r in all_actions if r.get("category")==key) for key in CATEGORY_META}
@@ -110,6 +118,7 @@ def catalog(game):
 
 def _social_resolve(game,action_id):
     _,_,kind,name=action_id.split(":",3);state=game.state;place=location_node(state)["name"]
+    if _obj(state.get("combat")).get("active"):raise ValueError("Finish the active encounter before spending time socially.")
     available={p["name"]:p for p in available_people(state,place)}
     if name not in available:raise ValueError("That person is not currently available here.")
     today=int(state.get("canon_day",0) or 0);ledger=state.setdefault("offline_social_activity",{});key=f"{name}:{today}";count=int(ledger.get(key,0) or 0)
@@ -137,10 +146,11 @@ def resolve_action(game,payload):
     if not game.campaign_active:raise ValueError("Start or load a campaign first.")
     action_id=_text(payload.get("id"));place=location_node(game.state)["name"]
     if not action_id:raise ValueError("Choose an offline activity.")
+    if action_id.startswith("offline:navigate:"):return {"status":"navigation","target":action_id.rsplit(":",1)[-1],"state":game.public_state(),"story":[]}
+    if _obj(game.state.get("combat")).get("active"):raise ValueError("Finish the active tactical encounter before taking another world action.")
     if action_id.startswith("offline:social:"):return _social_resolve(game,action_id)
     if action_id.startswith("offline:travel:"):
         destination=_text(payload.get("destination"));route_id=_text(payload.get("route_id"));request={"place":place,"action":"journey:start","destination":destination,"route_id":route_id,"preparation":payload.get("preparation","normal"),"companion":payload.get("companion","")};spec=action_spec(game.state,request);return resolve(game,request,spec)
-    if action_id.startswith("offline:navigate:"):return {"status":"navigation","target":action_id.rsplit(":",1)[-1],"state":game.public_state(),"story":[]}
     spec=action_spec(game.state,{"place":place,"action":action_id});return resolve(game,{"place":place,"action":action_id},spec)
 
 def opening(game):
