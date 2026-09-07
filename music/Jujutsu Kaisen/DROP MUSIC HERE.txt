@@ -1,0 +1,3 @@
+Drop MP3, M4A, WAV, OGG, or MP4 audio files here to make them available to Jujutsu Kaisen campaigns.
+
+No copyrighted soundtrack is bundled with Worldwalker. The player controls the local files used by this folder.

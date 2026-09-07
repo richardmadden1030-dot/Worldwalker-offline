@@ -1,0 +1,15 @@
+{
+  "name": "Worldwalker RPG",
+  "short_name": "Worldwalker",
+  "description": "A living-world, AI-guided role-playing game.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "categories": ["games", "entertainment"],
+  "background_color": "#080a16",
+  "theme_color": "#0c0f1e",
+  "icons": [
+    {"src": "/assets/branding/worldwalker-emblem.png", "sizes": "any", "type": "image/png", "purpose": "any maskable"}
+  ]
+}

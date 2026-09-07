@@ -1,0 +1,24 @@
+/* Tablet-width desktop layout. Phone navigation retains its 720px boundary. */
+@media (min-width:721px) and (max-width:1100px) {
+  .app-shell {
+    grid-template-columns:minmax(140px,.7fr) minmax(0,1.7fr) minmax(190px,.9fr);
+    grid-template-rows:84px minmax(0,1fr); gap:8px; padding:8px;
+  }
+  .col { min-width:0; }
+  .topbar { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 8px; padding:8px 12px; min-width:0; }
+  .topbar-left { grid-column:1/-1; justify-content:space-between; gap:10px; }
+  .topbar-center { min-width:0; font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .topbar-right { min-width:0; gap:4px; flex-wrap:wrap; justify-content:flex-end; }
+  .topbar-right .pill { font-size:9px; padding:4px 5px; max-width:95px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .topbar-right .icon-btn { width:28px; height:28px; padding:5px; }
+  .story-entry { grid-template-columns:minmax(0,1fr); gap:5px; padding:9px; }
+  .suggested-actions { grid-template-columns:minmax(0,1fr); }
+  .suggestion-card { min-height:46px; }
+  .attributes-grid { grid-template-columns:minmax(0,1fr); }
+}
+@media (min-width:721px) and (max-width:900px) {
+  .col-left .bar-row { display:grid; grid-template-columns:auto minmax(0,1fr); gap:3px 6px; }
+  .col-left .bar-label { width:auto; }
+  .col-left .bar-value { grid-column:2; grid-row:1; width:auto; }
+  .col-left .bar-track { grid-column:1/-1; grid-row:2; width:100%; min-width:0; }
+}

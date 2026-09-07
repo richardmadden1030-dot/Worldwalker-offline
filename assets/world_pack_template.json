@@ -1,0 +1,33 @@
+{
+  "id": "my-original-world",
+  "version": "1.0",
+  "name": "My Original World",
+  "tagline": "A concise description shown during character creation.",
+  "resource": "Resolve",
+  "rules": "Describe the setting's immutable rules, power system, geography, and social constraints.",
+  "start": "Crossroads",
+  "currency": "Crowns",
+  "abilities": ["Might", "Agility", "Resolve", "Lore", "Insight", "Presence"],
+  "origins": ["Local", "Outsider"],
+  "archetypes": ["Vanguard", "Scout", "Scholar"],
+  "factions": {"Free Cities": 0, "Frontier Guild": 0},
+  "special": {"Power Source": "Dormant"},
+  "map": [
+    ["Crossroads", 50, 55, "settlement", 1],
+    ["Northern Citadel", 48, 20, "fortress", 5]
+  ],
+  "training": ["Conditioning", "Power Control"],
+  "shop_types": ["General Store", "Guild Supplier"],
+  "loot": ["Crowns", "Crafting Material"],
+  "encounters": ["Road Bandits", "Frontier Beast"],
+  "systems": ["Reputation", "Awakening"],
+  "stat_style": "narrative",
+  "gear_style": "weapon_only",
+  "start_options": [],
+  "playable_characters": [],
+  "timeline": {
+    "start_day": -7,
+    "anchor": "Seven days before the opening incident",
+    "events": [{"day": 0, "title": "Opening incident", "location": "Crossroads", "summary": "The main pressure begins."}]
+  }
+}

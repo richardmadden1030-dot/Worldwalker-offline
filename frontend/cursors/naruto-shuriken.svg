@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#bbc4c8"/>
+      <stop offset=".28" stop-color="#3c454a"/>
+      <stop offset=".72" stop-color="#121719"/>
+      <stop offset="1" stop-color="#737d82"/>
+    </linearGradient>
+  </defs>
+  <path d="M16 1.6c1.8 5.1 2.1 8.5.9 10.6 2.1-1.2 5.5-.9 10.7.9-5.1 1.8-8 3.6-9.1 5.7 2.4.6 4.9 2.9 7.9 7.5-4.8-2.5-8.1-3.2-10.3-2.1-.2 2.4-2 5.3-5.8 9.1.9-5.3.5-8.7-1.2-10.5-2.3.7-5.6-.2-10.3-2.8 5.4-.7 8.5-2 9.8-4.1-1.5-1.9-1.7-5.3-.7-10.6 2.9 4.6 5.4 6.9 7.8 7.2C17 10.5 17.1 6.9 16 1.6Z" transform="translate(2 -1.4) scale(.88)" fill="url(#steel)" stroke="#080b0d" stroke-width="1.35" stroke-linejoin="round"/>
+  <circle cx="16" cy="16" r="5" fill="#242b2e" stroke="#8f999d" stroke-width="1.1"/>
+  <circle cx="16" cy="16" r="2.15" fill="#090c0d" stroke="#c4cbce" stroke-width=".85"/>
+  <path d="M16 4.4 17 11M27.6 16 21 17M16 27.6 15 21M4.4 16 11 15" stroke="#e8edef" stroke-width=".85" stroke-linecap="round" opacity=".58"/>
+</svg>

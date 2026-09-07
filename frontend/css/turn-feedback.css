@@ -1,0 +1,20 @@
+/* Compact, world-themed results inside the Chronicle, not another modal. */
+.story-entry.turn-receipt {
+  display: block; margin: 10px 0 3px; padding: 0;
+  border: 1px solid var(--border); border-left: 3px solid var(--accent);
+  border-radius: 10px; background: var(--panel); overflow-wrap: anywhere;
+}
+.turn-receipt > summary { cursor: pointer; padding: 10px 12px; font-size: 12px; line-height: 1.5; }
+.turn-receipt > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 9px; }
+.turn-receipt-meta { margin-left: 9px; color: var(--sub); font-size: 11px; }
+.turn-receipt-preview { display: flex; flex-wrap: wrap; gap: 4px 8px; margin-top: 6px; }
+.turn-receipt-preview > span { border-radius: 5px; padding: 2px 6px; background: rgba(var(--accent-rgb,199,161,92),.10); }
+.turn-receipt-body { padding: 0 12px 12px; font-size: 12px; }
+.turn-receipt-changes { margin: 2px 0 12px; }
+.turn-receipt-changes > div { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 10px; padding: 6px 0; border-top: 1px solid var(--border); }
+.turn-receipt-changes dt { font-weight: 600; }
+.turn-receipt-changes dd { margin: 0; text-align: right; }
+.turn-receipt-body small { color: var(--sub); font-size: 10px; }
+.turn-receipt-attention { margin: 5px 0; }
+.turn-receipt[open] > summary { margin-bottom: 3px; }
+@media (max-width: 720px) { .turn-receipt-meta { display: block; margin-left: 0; } }

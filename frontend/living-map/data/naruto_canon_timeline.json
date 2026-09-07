@@ -1,0 +1,370 @@
+{
+ "start_day": -7,
+ "anchor": "Seven days before Naruto's Academy graduation",
+ "events": [
+  {
+   "day": -22319,
+   "title": "Konohagakure is founded",
+   "location": "Konohagakure",
+   "summary": "Hashirama Senju and Madara Uchiha end generations of clan warfare, founding Konohagakure together; Hashirama becomes its First Hokage.",
+   "major": false,
+   "historical_only": true
+  },
+  {
+   "day": -19822,
+   "title": "Hashirama defeats Madara Uchiha",
+   "location": "Valley of the End",
+   "summary": "Madara Uchiha attacks Konoha and is defeated by Hashirama Senju in their legendary battle, later commemorated by the carved cliffs of the Valley of the End.",
+   "major": false,
+   "historical_only": true
+  },
+  {
+   "day": -16710,
+   "title": "The First Shinobi World War ends",
+   "location": "Konohagakure",
+   "summary": "The war closes with Tobirama Senju's death; Hiruzen Sarutobi becomes the Third Hokage in the aftermath.",
+   "major": false,
+   "historical_only": true
+  },
+  {
+   "day": -9323,
+   "title": "The Second Shinobi World War begins",
+   "location": "Amegakure",
+   "summary": "War breaks out across the shinobi nations; Kurama, the Nine-Tails, is sealed into Kushina Uzumaki, making her its second jinchuriki.",
+   "major": false,
+   "historical_only": true
+  },
+  {
+   "day": -6641,
+   "title": "Sakumo Hatake's death",
+   "location": "Konohagakure",
+   "summary": "The White Fang of Konoha takes his own life after being condemned for choosing to save his comrades over completing a mission — a shadow that will hang over his son Kakashi for years.",
+   "major": false,
+   "historical_only": true
+  },
+  {
+   "day": -5220,
+   "title": "The original Akatsuki is founded",
+   "location": "Amegakure",
+   "summary": "Yahiko, Nagato, and Konan establish the original Akatsuki as an Amegakure peace movement. The player's decisions can shape its charter, methods, allies, and relationship with Hanzō from its first day."
+  },
+  {
+   "day": -4857,
+   "title": "The Kannabi Bridge mission",
+   "location": "Kannabi Bridge",
+   "summary": "Rin Nohara dies and Obito Uchiha is believed killed during a mission gone wrong; Kakashi inherits Obito's Sharingan, and both awaken the Mangekyō Sharingan in their grief."
+  },
+  {
+   "day": -4856,
+   "title": "Yahiko's death and Akatsuki's transformation",
+   "location": "Amegakure",
+   "summary": "Yahiko dies after Hanzō and Danzō force a cruel choice on Nagato. The original peace movement survives under a grief-stricken Nagato, while the masked shinobi calling himself Madara begins steering it toward the darker organization later feared as Akatsuki."
+  },
+  {
+   "day": -4380,
+   "title": "Naruto's birth and the Nine-Tails attack",
+   "location": "Konohagakure",
+   "summary": "Naruto is born as Obito's attack breaks Kushina's seal; Minato and Kushina confront the Nine-Tails while Konoha fights for survival.",
+   "scope": "wide",
+   "banner": "nine_tails_attack_on_konoha"
+  },
+  {
+   "day": -4233,
+   "title": "Might Duy's sacrifice",
+   "location": "Land of Fire",
+   "summary": "Might Duy rescues Guy, Ebisu, and Genma from the Seven Swordsmen of the Mist, killing two of them before dying from opening the Eight Gates.",
+   "major": false
+  },
+  {
+   "day": -3233,
+   "title": "The Hyūga Affair",
+   "location": "Konohagakure",
+   "summary": "After Hiashi Hyūga kills a Kumogakure envoy in retaliation for an attempted kidnapping, his twin brother Hizashi sacrifices his own life under the branch seal to satisfy the peace treaty.",
+   "major": false
+  },
+  {
+   "day": -1603,
+   "title": "The Uchiha Massacre",
+   "location": "Konohagakure",
+   "summary": "Itachi Uchiha kills nearly his entire clan in a single night under Konoha's own order to prevent a coup, sparing only his younger brother Sasuke. The truth behind why is hidden from the village for years.",
+   "banner": "uchiha_massacre"
+  },
+  {
+   "day": 0,
+   "title": "Academy graduation night — the Mizuki incident",
+   "location": "Konohagakure",
+   "summary": "Naruto's graduation is followed the same night by Mizuki's betrayal: he tricks Naruto into stealing the Forbidden Scroll of Seals before being stopped, and the new genin generation begins forming."
+  },
+  {
+   "day": 2,
+   "title": "Ninja Registration Day",
+   "location": "Konohagakure",
+   "summary": "Naruto is formally registered as a shinobi of the Hidden Leaf, and meets Konohamaru for the first time.",
+   "major": false
+  },
+  {
+   "day": 3,
+   "title": "The Graduation Ceremony",
+   "location": "Konohagakure",
+   "summary": "Twenty-seven students graduate into nine three-person genin teams.",
+   "major": false
+  },
+  {
+   "day": 4,
+   "title": "Team 7 is formed",
+   "location": "Konohagakure",
+   "summary": "Kakashi Hatake accepts Naruto, Sasuke, and Sakura as Team 7, alongside the formation of Team 8 and Team 10.",
+   "major": false
+  },
+  {
+   "day": 20,
+   "title": "D-rank missions begin",
+   "location": "Konohagakure",
+   "summary": "Team 7 starts a run of menial village chores and errands — the unglamorous reality before real missions are trusted to them.",
+   "major": false
+  },
+  {
+   "day": 40,
+   "title": "The client's request",
+   "location": "Konohagakure",
+   "summary": "A traveling bridge-builder requests an escort mission undersold as routine, setting up a far more dangerous job than advertised.",
+   "major": false
+  },
+  {
+   "day": 56,
+   "title": "Land of Waves mission begins",
+   "location": "Land of Waves",
+   "summary": "Team 7 begins the bridge-builder escort mission and is immediately ambushed, then confronted by the missing-nin Zabuza Momochi, revealing the client's true danger.",
+   "banner": "land_of_waves_mission"
+  },
+  {
+   "day": 60,
+   "title": "Zabuza's ambush",
+   "location": "Land of Waves",
+   "summary": "The Demon of the Hidden Mist attacks the escort team directly, aided by his masked companion Haku.",
+   "major": false
+  },
+  {
+   "day": 65,
+   "title": "A quiet conversation in the woods",
+   "location": "Land of Waves",
+   "summary": "Haku speaks candidly about strength and precious people with Naruto in the forest, neither realizing they'll soon meet as enemies.",
+   "major": false
+  },
+  {
+   "day": 70,
+   "title": "Battle of the Great Naruto Bridge",
+   "location": "Land of Waves",
+   "summary": "Zabuza and Haku are confronted a final time; Haku dies protecting Zabuza, Zabuza kills Gato, and dies from Gato's men's wounds. The bridge battle reshapes Team 7's understanding of shinobi life and death."
+  },
+  {
+   "day": 76,
+   "title": "Team 7 returns from the Land of Waves",
+   "location": "Konohagakure",
+   "summary": "Team 7 completes the Naruto Bridge and returns home, resuming routine missions.",
+   "major": false
+  },
+  {
+   "day": 100,
+   "title": "Chūnin Exam nominations",
+   "location": "Konohagakure",
+   "summary": "Jōnin instructors across the village nominate their genin teams for the upcoming Chūnin Exams as foreign shinobi begin arriving in Konoha.",
+   "major": false
+  },
+  {
+   "day": 161,
+   "title": "Chūnin Exams begin",
+   "location": "Konohagakure",
+   "summary": "Genin from multiple villages gather for the written exam and the Forest of Death survival trial. Orochimaru infiltrates the exam and marks Sasuke with the cursed seal."
+  },
+  {
+   "day": 166,
+   "title": "Chūnin Exam preliminaries",
+   "location": "Konohagakure",
+   "summary": "One-on-one preliminary matches thin the surviving genin ahead of the final tournament, revealing hidden strength and rivalries; Naruto meets Jiraiya the same night.",
+   "major": false
+  },
+  {
+   "day": 175,
+   "title": "One month of final-round training",
+   "location": "Konohagakure",
+   "summary": "Finalists scatter to train intensively before the Chūnin Exam finals — Naruto with Jiraiya, Sasuke with Kakashi — each seeking an edge from a mentor or hidden technique.",
+   "major": false
+  },
+  {
+   "day": 185,
+   "title": "The curse mark's temptation",
+   "location": "Konohagakure",
+   "summary": "Sasuke wrestles with the cursed seal's promised power as Kakashi works out a way to counter it before the finals.",
+   "major": false
+  },
+  {
+   "day": 190,
+   "title": "Chūnin Exam finals and the Konoha Crush",
+   "location": "Konohagakure",
+   "summary": "The exam finals become the cover for a coordinated invasion by Sunagakure and Otogakure; the Third Hokage, Hiruzen Sarutobi, dies sealing away Orochimaru's arms — unless prior divergences alter the outcome.",
+   "scope": "wide"
+  },
+  {
+   "day": 192,
+   "title": "The search for Tsunade begins",
+   "location": "Konohagakure",
+   "summary": "With Itachi and Kisame sighted entering the village, Jiraiya and Naruto set out to track down the Sannin Tsunade and convince her to become the Fifth Hokage.",
+   "banner": "search_for_tsunade"
+  },
+  {
+   "day": 229,
+   "title": "Tsunade becomes Fifth Hokage",
+   "location": "Konohagakure",
+   "summary": "Tsunade returns to Konoha with Naruto and Jiraiya and formally accepts the title of Fifth Hokage.",
+   "major": false
+  },
+  {
+   "day": 238,
+   "title": "Sasuke's Departure",
+   "location": "Konohagakure",
+   "summary": "Consumed by the pull of Orochimaru's power, Sasuke abandons Konoha in the night after clashing with Naruto on the hospital rooftop.",
+   "banner": "sasukes_departure"
+  },
+  {
+   "day": 241,
+   "title": "Sasuke Retrieval Mission",
+   "location": "Land of Rice Fields",
+   "summary": "A team of genin pursues Sasuke to bring him back, each facing one of Orochimaru's Sound Four in a running battle that costs the team dearly; Naruto and Sasuke's confrontation at the Valley of the End ends with Sasuke continuing on to Orochimaru.",
+   "banner": "sasuke_retrieval_mission"
+  },
+  {
+   "day": 330,
+   "title": "Naruto departs with Jiraiya",
+   "location": "Konohagakure",
+   "summary": "Naruto leaves Konoha with Jiraiya for two and a half years of training, after Jiraiya tells him of Akatsuki's true threat.",
+   "major": false
+  },
+  {
+   "day": 1069,
+   "title": "Naruto returns after the training journey",
+   "location": "Konohagakure",
+   "summary": "Naruto and Jiraiya return to the village after roughly two and a half years, and Naruto retakes Kakashi's old bell test alongside Sakura.",
+   "major": false
+  },
+  {
+   "day": 1076,
+   "title": "Gaara's death and rescue",
+   "location": "Sunagakure",
+   "summary": "Akatsuki's Deidara and Sasori extract Shukaku from Gaara, killing him; Sakura and Chiyo defeat Sasori, and Chiyo sacrifices her own life to revive Gaara — the crew's first direct confrontation with Akatsuki.",
+   "banner": "gaara_rescue"
+  },
+  {
+   "day": 1337,
+   "title": "Asuma Sarutobi's death",
+   "location": "Land of Fire",
+   "summary": "Hidan of Akatsuki kills Asuma Sarutobi before Shikamaru's team avenges him.",
+   "major": false
+  },
+  {
+   "day": 1360,
+   "title": "Jiraiya's death in Amegakure",
+   "location": "Amegakure",
+   "summary": "Jiraiya infiltrates Amegakure to learn the truth behind Pain, fights Pain and Konan, and dies delivering crucial intelligence back to Konoha with his final moments."
+  },
+  {
+   "day": 1361,
+   "title": "Itachi Uchiha's death",
+   "location": "Land of Fire",
+   "summary": "Sasuke finally confronts and kills Itachi in single combat; Itachi, already dying of illness, ensures his brother survives the fight."
+  },
+  {
+   "day": 1400,
+   "title": "Itachi's Truth",
+   "location": "Land of Fire",
+   "summary": "In the aftermath of Itachi's death, the truth of the Uchiha Massacre comes to light: Itachi acted under Konoha's own order to prevent a coup, sacrificing his name and his brother's hatred to protect the village he loved.",
+   "banner": "itachis_truth"
+  },
+  {
+   "day": 1409,
+   "title": "Pain's Assault on Konoha",
+   "location": "Konohagakure",
+   "summary": "Pain launches a full assault on Konohagakure in pursuit of Naruto, leveling much of the village within minutes.",
+   "scope": "wide",
+   "banner": "pains_assault_on_konoha"
+  },
+  {
+   "day": 1409,
+   "title": "Naruto vs. Pain",
+   "location": "Konohagakure",
+   "summary": "Naruto confronts Pain directly, ultimately learning Nagato's true identity and choosing to spare him — a choice that reshapes the Akatsuki leader's own resolve as he sacrifices himself to revive the villagers he killed.",
+   "banner": "naruto_vs_pain"
+  },
+  {
+   "day": 1410,
+   "title": "The Five Kage Summit",
+   "location": "Iron Country",
+   "summary": "The Five Kage meet to decide how to respond to Akatsuki, only for Sasuke to attack the summit himself; the masked Akatsuki leader declares the Fourth Shinobi World War in the chaos that follows.",
+   "major": false
+  },
+  {
+   "day": 1420,
+   "title": "Obito's Reveal",
+   "location": "Fourth War Front",
+   "summary": "The masked man behind Akatsuki's true plan is revealed to be Obito Uchiha, Kakashi's presumed-dead teammate, radically reframing the entire war's cause.",
+   "banner": "obitos_reveal"
+  },
+  {
+   "day": 1684,
+   "title": "The Fourth Shinobi World War begins",
+   "location": "Fourth War Front",
+   "summary": "The Allied Shinobi Forces mobilize against Akatsuki's reanimated army, opening the war that will decide the future of the shinobi world.",
+   "scope": "wide"
+  },
+  {
+   "day": 1685,
+   "title": "Kaguya's Appearance",
+   "location": "Kaguya's Dimension",
+   "summary": "Obito casts the Infinite Tsukuyomi, but Black Zetsu's betrayal uses him to revive Kaguya Ōtsutsuki instead — a threat beyond anything the shinobi world has faced, who kills Obito himself moments later.",
+   "banner": "kaguyas_appearance"
+  },
+  {
+   "day": 1686,
+   "title": "Naruto and Sasuke vs. Kaguya",
+   "location": "Kaguya's Dimension",
+   "summary": "Naruto and a reconciled Sasuke seal Kaguya away for good, ending the Fourth Shinobi World War and the immediate threat to the entire world; Madara dies as the Ten-Tails is removed from him.",
+   "banner": "naruto_and_sasuke_vs_kaguya"
+  },
+  {
+   "day": 1687,
+   "title": "Naruto vs. Sasuke — Final Valley",
+   "location": "Valley of the End",
+   "summary": "With the war won, Naruto and Sasuke settle their own long rivalry in a final, defining battle at the Valley of the End, each losing an arm before finally reconciling.",
+   "banner": "naruto_vs_sasuke_final_valley"
+  },
+  {
+   "day": 2064,
+   "title": "Kakashi becomes Sixth Hokage",
+   "location": "Konohagakure",
+   "summary": "Kakashi Hatake is named the Sixth Hokage in the war's aftermath, the same month Sasuke leaves the village once more to atone for the past on his own terms.",
+   "major": false
+  },
+  {
+   "day": 2553,
+   "title": "Naruto and Hinata marry",
+   "location": "Konohagakure",
+   "summary": "Naruto Uzumaki and Hinata Hyūga marry in Konohagakure, years after the war's end.",
+   "major": false
+  },
+  {
+   "day": 4413,
+   "title": "Naruto Becomes Hokage",
+   "location": "Konohagakure",
+   "summary": "Naruto is formally named the Seventh Hokage, fulfilling his childhood dream and the village's recognition of everything he sacrificed to earn it.",
+   "scope": "wide",
+   "banner": "naruto_becomes_hokage"
+  },
+  {
+   "day": 6910,
+   "title": "Momoshiki and Kinshiki's attack",
+   "location": "Konohagakure",
+   "summary": "During the Chūnin Exams hosted in Konoha, the Ōtsutsuki invaders Momoshiki and Kinshiki attack the village, forcing the next generation of shinobi into their first real crisis.",
+   "major": false
+  }
+ ]
+}

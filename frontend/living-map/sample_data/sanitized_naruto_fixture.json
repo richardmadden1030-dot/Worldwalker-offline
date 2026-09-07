@@ -1,0 +1,195 @@
+{
+  "_fixture_note": "SANITIZED, FICTIONAL test fixture — NOT a real Worldwalker save. Anonymous character, invented content, no private data or local paths. Shaped like a real Worldwalker save bundle so js/adapter.js can be exercised (buildLivingMapState) and the prototype's 'Real Campaign Copy' source renders after a fresh git clone (the real save copy is git-ignored). Regenerate/extend as the adapter grows.",
+  "version": "0.0.0-fixture",
+  "schema_version": 21,
+  "save_kind": "manual",
+  "saved_at": "2000-01-01T00:00:00",
+  "campaign": { "name": "Kori Sato", "world": "Naruto", "turn": 12, "world_time": "April 10, Year 1 — Morning, 09:00" },
+  "state": {
+    "name": "Kori Sato",
+    "world": "Naruto",
+    "age": "13",
+    "age_at_campaign_start": "13",
+    "location": "Konohagakure",
+    "position": "Genin of the Hidden Leaf",
+    "hp": 90, "hp_max": 100,
+    "resource": 70, "resource_max": 100, "resource_name": "Chakra",
+    "level": 3, "xp": 40, "xp_next": 100,
+    "weather": "clear",
+    "turn": 12,
+    "difficulty": "Adventurer",
+    "starting_power_band": "Genin",
+    "appearance_desc": "A fictional test genin with a plain forehead protector.",
+    "background": "Invented background for the sanitized fixture. No real player data.",
+    "stats": { "Taijutsu": 40, "Ninjutsu": 55, "Genjutsu": 20, "Chakra Control": 48, "Willpower": 35, "Intellect": 30 },
+    "titles": ["Rookie of the Year (fixture)"],
+    "affiliations": [ { "faction": "Konohagakure", "rank": "Genin", "status": "active", "joined": "Campaign start", "notes": "Fixture affiliation." } ],
+    "reputation": { "Konohagakure": 12, "Sunagakure": 0, "Kirigakure": 0, "Kumogakure": 0, "Iwagakure": 0, "Amegakure": 0, "Iron Country": 0 },
+    "factions": { "Konohagakure": 5, "Sunagakure": 0, "Kirigakure": 0, "Kumogakure": 0, "Iwagakure": 0, "Amegakure": 0, "Iron Country": 0 },
+    "special": {
+      "Shinobi Rank": "Genin",
+      "Nature Affinity": "Wind Release",
+      "Known Jutsu": ["Transformation Technique", "Wind Release: Gale Palm"],
+      "Clan": "None",
+      "Origin": "Konoha Academy graduate",
+      "Archetype": "Ninjutsu Student"
+    },
+    "skills": {
+      "Wind Release Ninjutsu": { "rank": "Novice", "bonus": 2, "description": "Basic wind-nature techniques (fixture)." },
+      "Shuriken Handling": { "rank": "Proficient", "bonus": 3, "description": "Standard tool proficiency (fixture)." }
+    },
+    "ability_registry": {
+      "Wind Release Ninjutsu": { "name": "Wind Release Ninjutsu", "rank": "Novice" },
+      "Shuriken Handling": { "name": "Shuriken Handling", "rank": "Proficient" }
+    },
+    "capability_profile": { "version": 1, "world": "Naruto",
+      "power": { "player_facing": { "balanced": { "index": 2, "name": "Genin", "score": 42 } } } },
+    "portrait_identity": { "locked": false, "canonical_description": "Fictional test genin.", "history": [] },
+    "campaign_direction": {
+      "primary_goal": "Pass the next mission and earn a recommendation for the Chūnin Exams",
+      "next_obstacle": "The team lacks a reliable tracker.",
+      "unresolved_characters": [
+        { "name": "Squad Leader Aoi", "goal": "Assess whether the team is ready for a C-rank mission.", "progress": 40.0, "location": "Konohagakure" },
+        { "name": "Rival Genin Mako", "goal": "Beat Kori's team to a recommendation.", "progress": 25.0, "location": "Konohagakure" }
+      ],
+      "nearby_opportunities": [ "Volunteer for a border courier run", "Ask the quartermaster about wind-nature training scrolls" ],
+      "approaching_canon_event": {
+        "title": "Academy graduation night — the Mizuki incident",
+        "location": "Konohagakure",
+        "minutes_until": 43200, "days_until": 30.0,
+        "summary": "Fixture reference to the next scheduled canon beat."
+      },
+      "last_updated_turn": 12
+    },
+    "canon_day": -40,
+    "canon_anchor": "Fixture: roughly forty days before the Academy graduation night.",
+    "canon_events_fired": [ "day:-4380:Naruto's birth and the Nine-Tails attack" ],
+    "canon_event_states": {},
+    "active_canon_event": "",
+    "timeline": [ "April 8, Year 1 — Kori's team completes a D-rank fence-repair job outside the village." ],
+    "quests": [
+      {
+        "name": "Team Aoi — Readiness Trial",
+        "status": "Active",
+        "category": "side",
+        "objectives": [
+          { "id": "obj-1", "text": "Complete three D-rank missions without injury", "status": "active", "optional": false, "progress": 66 },
+          { "id": "obj-2", "text": "Demonstrate a working wind-nature technique to Squad Leader Aoi", "status": "active", "optional": false, "progress": 20 }
+        ],
+        "locations": ["Konohagakure"],
+        "involved_npcs": ["Squad Leader Aoi"],
+        "next_hint": "Continue working on: Complete three D-rank missions without injury"
+      }
+    ],
+    "quest_archive": [],
+    "campaign_arcs": [
+      { "id": "arc-1", "title": "Team Aoi — Readiness Trial", "kind": "quest", "status": "active", "phase": "developing", "progress": 30, "created_turn": 6, "last_touched_turn": 12, "history": [] },
+      { "id": "arc-2", "title": "Rivalry with Mako's team", "kind": "relationship", "status": "active", "phase": "emerging", "progress": 15, "created_turn": 9, "last_touched_turn": 11, "history": [] }
+    ],
+    "story_threads": {
+      "quest:team aoi": { "id": "quest:team aoi", "title": "Team Aoi — Readiness Trial", "kind": "agenda", "status": "active", "detail": "Continue working on: Complete three D-rank missions without injury", "source": "quests", "updated_turn": 12 },
+      "intent:train-wind": { "id": "intent:train-wind", "title": "Train wind-nature control every evening", "kind": "standing_intent", "status": "active", "detail": "", "source": "standing_intents", "updated_turn": 12 }
+    },
+    "standing_intents": [ { "id": "train-wind", "text": "Train wind-nature control every evening", "status": "active" } ],
+    "power_goal_tracker": { "key": "improve wind-nature control", "days_invested": 6.0 },
+    "companions": [
+      { "name": "Teammate Rei", "role": "Close-range fighter; covers Kori on missions." },
+      { "name": "Teammate Doro", "role": "Sensor-in-training; still unreliable." }
+    ],
+    "contacts": {
+      "Konohagakure": { "name": "Konohagakure", "kind": "group", "status": "Affiliated", "relationship": 0, "last_known_location": "Unknown", "notes": [], "can_contact": true, "first_met_turn": 0 },
+      "Sunagakure": { "name": "Sunagakure", "kind": "group", "status": "Known", "relationship": 0, "last_known_location": "Unknown", "notes": [], "can_contact": true, "first_met_turn": 0 },
+      "Squad Leader Aoi": { "name": "Squad Leader Aoi", "kind": "person", "status": "Known", "relationship": 0, "last_known_location": "Konohagakure", "notes": [], "can_contact": true, "first_met_turn": 1 },
+      "Rival Genin Mako": { "name": "Rival Genin Mako", "kind": "person", "status": "Known", "relationship": 0, "last_known_location": "Konohagakure", "notes": [], "can_contact": true, "first_met_turn": 4 }
+    },
+    "relationships": {},
+    "npc_relationships": {},
+    "npc_intentions": {
+      "Squad Leader Aoi": { "goal": "Assess whether the team is ready for a C-rank mission.", "progress": 40.0, "status": "in_progress", "relationship": "Cautious mentor", "opinion_of_player": "Promising but untested; wants proof of a working nature technique.", "location": "Konohagakure", "last_known_location": "Konohagakure", "recurring": true, "detail": "full" },
+      "Rival Genin Mako": { "goal": "Beat Kori's team to a recommendation.", "progress": 25.0, "status": "in_progress", "relationship": "Friendly rival", "opinion_of_player": "Sees Kori as the one to beat.", "location": "Konohagakure", "last_known_location": "Konohagakure", "recurring": true, "detail": "full" }
+    },
+    "npc_continuity": {
+      "Squad Leader Aoi": { "name": "Squad Leader Aoi", "role": "Cautious mentor", "companion": false, "nemesis": false, "recurring": true, "goal": "Assess team readiness.", "status": "active", "last_known_location": "Konohagakure", "attitude": "Cautious mentor", "schedule": {}, "knowledge": {}, "memory_chain": [] },
+      "Teammate Rei": { "name": "Teammate Rei", "role": "Close-range fighter", "companion": true, "nemesis": false, "recurring": true, "goal": "Protect the team.", "status": "active", "last_known_location": "Konohagakure", "attitude": "Loyal teammate", "schedule": {}, "knowledge": {}, "memory_chain": [] }
+    },
+    "npc_schedules": {
+      "Squad Leader Aoi": { "commitments": [], "goal": "Assess team readiness.", "status": "due", "next_action": "Take the next practical step", "location": "Konohagakure", "last_checked_day": -40 }
+    },
+    "npc_clocks": {
+      "Squad Leader Aoi": { "name": "Squad Leader Aoi", "kind": "npc", "goal": "Assess team readiness.", "progress": 40, "threshold": 100, "status": "in_progress", "immediate_goal": "Watch the next D-rank mission", "operations": [] }
+    },
+    "faction_clocks": {
+      "Konohagakure": { "name": "Konohagakure", "kind": "faction", "goal": "Prepare genin teams for the Chūnin Exams", "progress": 60, "threshold": 100, "status": "in_progress", "immediate_goal": "Schedule readiness trials", "target_location": "", "operations": [], "alliances": [], "rivals": [] },
+      "Sunagakure": { "name": "Sunagakure", "kind": "faction", "goal": "Maintain the alliance with Konoha", "progress": 100, "threshold": 100, "status": "turning_point", "immediate_goal": "Send an exam delegation", "target_location": "", "operations": [], "alliances": [], "rivals": [] }
+    },
+    "organizations": {
+      "org-team-aoi": { "id": "org-team-aoi", "name": "Team Aoi", "members": {
+        "Kori Sato": { "name": "Kori Sato", "position": "Genin", "status": "active" },
+        "Teammate Rei": { "name": "Teammate Rei", "position": "Genin", "status": "active" },
+        "Teammate Doro": { "name": "Teammate Doro", "position": "Genin", "status": "active" },
+        "Squad Leader Aoi": { "name": "Squad Leader Aoi", "position": "Jōnin instructor", "status": "active" }
+      }, "history": [], "leader": "Squad Leader Aoi", "kind": "squad", "provisional": false }
+    },
+    "organization_lives": {},
+    "faction_rosters": { "Team Aoi": ["Kori Sato", "Teammate Rei", "Teammate Doro", "Squad Leader Aoi"] },
+    "discovered_locations": ["Konohagakure", "Land of Fire", "Forest of Death"],
+    "custom_locations": [],
+    "location_details": {},
+    "political_regions": [],
+    "polity_state": {},
+    "world_events": [
+      "April 2, Year 1 — Genin teams are formed\nLocation: Konohagakure. This year's Academy graduates are sorted into three-person teams under jōnin instructors.",
+      "April 6, Year 1 — Chūnin Exam preparations begin\nLocation: Konohagakure. Instructors start assessing which teams to nominate.",
+      "April 9, Year 1 — A Sand delegation is expected\nLocation: Sunagakure. Sunagakure prepares to send genin and observers to the next exams.",
+      "⚔ Bandits and a border patrol clash over the Land of Rivers, but neither gains lasting advantage."
+    ],
+    "background_world_feed": [
+      "April 2, Year 1 — Genin teams are formed\nLocation: Konohagakure. This year's Academy graduates are sorted into three-person teams.",
+      "Squad Leader Aoi advances a plan: Assess whether the team is ready for a C-rank mission."
+    ],
+    "world_milestones": [
+      { "id": "ms-1", "turn": 8, "canon_day": -48, "world": "Naruto", "heading": "SHINOBI RECORD", "title": "First real mission", "detail": "Kori's team completes its first supervised D-rank job without incident (fixture)." }
+    ],
+    "living_world": { "patterns": { "training": 3, "general": 5, "quest": 2 }, "event_history": [], "cooldowns": {}, "interpretation_history": [] },
+    "world_activity": { "world": "Naruto", "version": 1, "naruto": { "career": { "rank": "Genin", "promotion_readiness": 20 }, "specialties": {} } },
+    "world_depth": { "world": "Naruto", "profile_version": 1, "progression_paths": [], "faction_doctrines": {} },
+    "world_downtime_cycles": {},
+    "simulation_events": [
+      { "id": "sim-10", "turn": 10, "canon_day": -44, "summary": "Kori lands a clean Gale Palm during evening training; the technique is becoming reliable.", "importance": 30, "sources": ["narrator"], "recorded_at": "2000-01-01T00:00:00" },
+      { "id": "sim-11", "turn": 11, "canon_day": -42, "summary": "Elsewhere, mission assignments, team practice and village obligations continued around the active plan.", "importance": 10, "sources": ["narrator"], "recorded_at": "2000-01-01T00:00:00" },
+      { "id": "sim-12", "turn": 12, "canon_day": -40, "summary": "Squad Leader Aoi's situation has moved forward. Current direction: Assess whether the team is ready for a C-rank mission.", "importance": 55, "sources": ["narrator"], "recorded_at": "2000-01-01T00:00:00" }
+    ],
+    "campaign_canon": [
+      { "turn": 11, "time": "2000-01-01T00:00:00", "action": "Advance: Train wind-nature control and take another D-rank mission with the team.", "outcome": "Over a week, Kori's Gale Palm becomes dependable and the team completes a second D-rank job cleanly. Squad Leader Aoi notes the improvement but has not yet nominated the team." }
+    ],
+    "chapter_summaries": [
+      { "number": 1, "title": "Chapter 1: Konohagakure", "turns": [1, 6], "time_span": "April 1, Year 1 — Morning, 08:00 — April 6, Year 1 — Morning, 09:00",
+        "summary": "Kori Sato graduates the Academy and is placed on Team Aoi with Rei and Doro. The team runs its first D-rank missions and begins evening training in wind-nature control while Squad Leader Aoi weighs whether they are ready for harder work.",
+        "key_decisions": ["Advance: Focus training on a single reliable wind technique."], "lasting_changes": [], "unresolved_quests": ["Team Aoi — Readiness Trial"] }
+    ],
+    "scene_history": [
+      { "turn": 12, "signature": ["Konohagakure", ["Squad Leader Aoi", "Teammate Rei"], "None", ""],
+        "scene": { "turn": 12, "location": "Konohagakure", "sublocation": "Training Ground Three", "activity": "training", "weather": "clear", "present": ["Squad Leader Aoi", "Teammate Rei"], "immediate_danger": "None", "current_objective": "Demonstrate a working wind-nature technique", "last_player_input": "Practice Gale Palm until it is reliable" } }
+    ],
+    "time_skip_history": [ { "turn": 11, "elapsed": { "amount": 10080, "unit": "minutes" }, "orders": ["Train wind-nature control"], "interrupted": false } ],
+    "settled_stories": [],
+    "travel_history": [],
+    "planned_route": [],
+    "combat": {},
+    "conditions": [],
+    "inventory": [ { "name": "Standard shuriken pouch", "qty": 1 } ],
+    "currency": { "name": "Ryō", "amount": 1200 },
+    "life_context": {
+      "world_terms": { "group": "shinobi team", "mentor": "sensei", "legacy": "clan and shinobi legacy" },
+      "people": [
+        { "name": "Teammate Rei", "role": "Close-range fighter", "active_goal": "Protect the team.", "status": "active" },
+        { "name": "Squad Leader Aoi", "role": "Cautious mentor", "active_goal": "Assess team readiness.", "status": "active" }
+      ],
+      "relationship_phases": []
+    }
+  },
+  "history": [],
+  "checkpoints": [],
+  "story_log": [],
+  "system_log": []
+}

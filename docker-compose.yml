@@ -1,0 +1,31 @@
+# One hosted friend server. Everyone visits the same URL, creates a username,
+# and receives an isolated game session, settings file, save folder, autosaves,
+# and imported campaigns under the persistent ./data volume.
+
+services:
+  worldwalker:
+    build: .
+    container_name: worldwalker-friends
+    mem_limit: 2g
+    cpus: 2.0
+    ports:
+      - "5001:8765"
+    volumes:
+      - ./data:/data
+    environment:
+      - WORLDWALKER_ACCOUNTS_ENABLED=1
+      - WORLDWALKER_MAX_ACCOUNTS=25
+      - GUNICORN_THREADS=8
+      - GUNICORN_TIMEOUT=600
+      # Optional: require a shared invite code when a friend creates an account.
+      # - WORLDWALKER_INVITE_CODE=choose-a-code
+      # Recommended for the public Cloudflare HTTPS site. Set to 0 only when
+      # testing directly over plain http://<server-ip>:5001.
+      - WORLDWALKER_SECURE_COOKIES=1
+      # The hosted AI can instead be configured in-game by the first account.
+      # Environment variables are cleaner for a shared server key:
+      # - OPENAI_API_KEY=...
+      # - WORLDWALKER_AI_MODEL=gpt-5.4-mini
+      # - WORLDWALKER_SECONDARY_MODEL=gpt-5.4-nano
+      # - WORLDWALKER_MAJOR_MODEL=gpt-5.4-mini
+    restart: unless-stopped

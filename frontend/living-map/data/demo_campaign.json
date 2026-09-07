@@ -1,0 +1,302 @@
+{
+  "_note": "Mock campaign state for the Living Map prototype. Stands in for what the real Worldwalker Python backend would emit. The player is allowed to SEE the living world; the simulation only carries INFORMATION QUALITY (information_status: confirmed | rumored | unconfirmed | unknown_identity) plus a plain activity `status`. Nothing on the map is hidden from the player because their character has not personally learned about it.",
+
+  "meta": { "campaign": "Naruto", "era": "Early Shippuden", "season": "Spring", "day": 1 },
+
+  "player": {
+    "id": "ren_arakawa", "name": "Ren Arakawa", "monogram": "蓮", "age": 15,
+    "affiliation": "Konohagakure", "rank": "Chunin", "homeLocation": "konoha",
+    "x": 0.478, "y": 0.492,
+    "health": { "cur": 100, "max": 100 },
+    "chakra": { "cur": 82, "max": 100 },
+    "chakraControl": 41,
+    "natures": [ { "name": "Lightning", "known": true }, { "name": "Unknown", "known": false } ],
+    "abilities": [ "Shadow Clone Technique", "Body Flicker", "Lightning Release (basics)", "Kunai proficiency" ],
+    "goals": [
+      { "text": "Reach Jonin rank", "tag": "ambition", "note": "Long-term" },
+      { "text": "Investigate Root activity", "tag": "intrigue", "note": "Open lead" },
+      { "text": "Find an advanced Lightning Release teacher", "tag": "training", "note": "Unresolved" }
+    ]
+  },
+
+  "relationships": {
+    "kakashi": { "score": 34, "sub": "Squad instructor - cautious" },
+    "naruto":  { "score": 20, "sub": "Peer - friendly rival" },
+    "tsunade": { "score": 15, "sub": "Hokage - formal" }
+  },
+
+  "canon": {
+    "gaara_rescue": {
+      "id": "gaara_rescue", "name": "Gaara Rescue Crisis", "daysOut": 6, "triggered": false,
+      "x": 0.19, "y": 0.60, "impactRegion": "land_of_wind", "impactDanger": "critical",
+      "activeDays": 5
+    }
+  },
+
+  "locations": {
+    "konoha": {
+      "id": "konoha", "type": "village", "name": "Konohagakure", "kanji": "木ノ葉隠れの里",
+      "short": "Hidden Leaf", "region": "land_of_fire", "x": 0.478, "y": 0.492,
+      "scope": "world", "importance": "critical",
+      "leaderLabel": "Hokage", "leader": "Tsunade", "status": "Stable",
+      "people": [ "kakashi", "naruto", "tsunade", "guy", "sakura" ],
+      "developments": [ "Reports of Root activity", "Border patrol mission available", "Chunin training exercises underway" ],
+      "orgs": [ "ANBU", "Root (unconfirmed)", "Medical Corps", "Konoha Military Police (defunct)" ],
+      "scene": "assets/scenes/naruto_konohagakure.webp"
+    },
+    "suna": {
+      "id": "suna", "type": "village", "name": "Sunagakure", "kanji": "砂隠れの里",
+      "short": "Hidden Sand", "region": "land_of_wind", "x": 0.181, "y": 0.63,
+      "scope": "world", "importance": "critical",
+      "leaderLabel": "Kazekage", "leader": "Gaara", "status": "Tense",
+      "people": [ "gaara", "kankuro", "temari" ],
+      "developments": [ "Requesting additional border patrols", "Akatsuki scouts rumoured near the border" ],
+      "orgs": [ "Puppet Brigade", "Sand Council" ],
+      "scene": "assets/scenes/naruto_sunagakure.webp"
+    },
+    "ame": {
+      "id": "ame", "type": "village", "name": "Amegakure", "kanji": "雨隠れの里",
+      "short": "Hidden Rain", "region": "land_of_rain", "x": 0.333, "y": 0.46,
+      "scope": "world", "importance": "high",
+      "leaderLabel": "Ruler", "leader": "\"God\" (unconfirmed)", "status": "Sealed - hostile to outsiders",
+      "people": [], "developments": [ "Borders sealed to all travellers", "Unmarked patrols on every road" ],
+      "orgs": [ "Unknown Akatsuki cell" ],
+      "scene": "assets/scenes/naruto_amegakure.webp"
+    },
+    "kiri": {
+      "id": "kiri", "type": "village", "name": "Kirigakure", "kanji": "霧隠れの里",
+      "short": "Hidden Mist", "region": "land_of_water", "x": 0.86, "y": 0.54,
+      "scope": "world", "importance": "high",
+      "leaderLabel": "Mizukage", "leader": "Mei Terumi", "status": "Reforming",
+      "people": [], "developments": [ "\"Bloody Mist\" reforms underway", "Open to limited foreign trade" ],
+      "orgs": [ "Hunter-nin Corps", "Seven Swordsmen (scattered)" ],
+      "scene": "assets/scenes/naruto_kirigakure.webp"
+    },
+    "kumo": {
+      "id": "kumo", "type": "village", "name": "Kumogakure", "kanji": "雲隠れの里",
+      "short": "Hidden Cloud", "region": "land_of_lightning", "x": 0.69, "y": 0.245,
+      "scope": "world", "importance": "high",
+      "leaderLabel": "Raikage", "leader": "A (Fourth)", "status": "Militarised",
+      "people": [], "developments": [ "Guarding its jinchuriki closely", "Deeply wary of Akatsuki" ],
+      "orgs": [ "Cloud ANBU", "Lightning Guard" ],
+      "scene": null
+    },
+    "iwa": {
+      "id": "iwa", "type": "village", "name": "Iwagakure", "kanji": "岩隠れの里",
+      "short": "Hidden Stone", "region": "land_of_earth", "x": 0.235, "y": 0.255,
+      "scope": "world", "importance": "medium",
+      "leaderLabel": "Tsuchikage", "leader": "Onoki", "status": "Isolationist",
+      "people": [], "developments": [ "Rebuilding trade caravans", "Suspicious of Leaf-Sand ties" ],
+      "orgs": [ "Explosion Corps" ],
+      "scene": null
+    },
+
+    "hokage_tower": {
+      "id": "hokage_tower", "type": "landmark", "name": "Hokage Tower", "parent": "konoha",
+      "region": "land_of_fire", "x": 0.486, "y": 0.470, "scope": "local", "importance": "medium",
+      "inspector": { "summary": "The administrative heart of the village. Mission board, archives, and Tsunade's office - when she is in it." }
+    },
+    "training_ground_3": {
+      "id": "training_ground_3", "type": "landmark", "name": "Training Ground Three", "parent": "konoha",
+      "region": "land_of_fire", "x": 0.505, "y": 0.523, "scope": "local", "importance": "medium",
+      "inspector": { "summary": "Three stumps, a river, and a memorial stone. Team 7's old proving ground; still used for morning drills." }
+    },
+    "academy": {
+      "id": "academy", "type": "landmark", "name": "Ninja Academy", "parent": "konoha",
+      "region": "land_of_fire", "x": 0.462, "y": 0.505, "scope": "local", "importance": "low",
+      "inspector": { "summary": "Where every Leaf shinobi starts. Chakra-control apparatus in the west hall is open to ranked ninja." }
+    },
+    "hospital": {
+      "id": "hospital", "type": "landmark", "name": "Konoha Hospital", "parent": "konoha",
+      "region": "land_of_fire", "x": 0.500, "y": 0.478, "scope": "local", "importance": "low",
+      "inspector": { "summary": "Run by the Medical Corps under Tsunade and Shizune. Sakura trains here most afternoons." }
+    },
+    "main_gate": {
+      "id": "main_gate", "type": "landmark", "name": "Main Gate", "parent": "konoha",
+      "region": "land_of_fire", "x": 0.523, "y": 0.514, "scope": "local", "importance": "medium",
+      "inspector": { "summary": "The village's front door. Kotetsu and Izumo log every arrival and departure - officially." }
+    }
+  },
+
+  "npcs": {
+    "kakashi": {
+      "id": "kakashi", "name": "Kakashi Hatake", "role": "Jonin - Team 7 Leader",
+      "homeLocation": "konoha", "trueLocation": "training_ground_3", "x": 0.505, "y": 0.523,
+      "trueX": 0.505, "trueY": 0.523, "scope": "local", "importance": "high",
+      "information_status": "confirmed", "status": "At Training Ground Three",
+      "affiliations": [ "Konohagakure", "Team 7", "ANBU (former)" ],
+      "recent": "Waved you off after the morning drills - \"Later. Maybe.\"",
+      "bio": "The Copy Ninja. Reads you like an open page and keeps his own book firmly shut. Knows far more Lightning Release than he lets on.",
+      "abilities": [ "Sharingan", "Lasting Chidori", "Water & Earth Release", "Ninhound Summoning" ],
+      "initials": "KH", "accent": "#8fb3c7", "scene": "assets/scenes/forest_path.webp"
+    },
+    "naruto": {
+      "id": "naruto", "name": "Naruto Uzumaki", "role": "Genin - Jinchuriki of the Nine-Tails",
+      "homeLocation": "konoha", "trueLocation": "konoha", "x": 0.470, "y": 0.500,
+      "trueX": 0.470, "trueY": 0.500, "scope": "local", "importance": "high",
+      "information_status": "confirmed", "status": "Around the village",
+      "affiliations": [ "Konohagakure", "Team 7", "Toad Sages (student)" ],
+      "recent": "Challenged you to a ramen-eating contest. You lost, badly.",
+      "bio": "Loud, relentless, impossible to discourage. Just back from two years on the road with Jiraiya and itching to prove every bit of it.",
+      "abilities": [ "Shadow Clone (mass)", "Rasengan", "Wind Release (learning)" ],
+      "initials": "NU", "accent": "#e6a23c", "scene": "assets/scenes/naruto_konohagakure.webp"
+    },
+    "tsunade": {
+      "id": "tsunade", "name": "Tsunade", "role": "Fifth Hokage - Legendary Sannin",
+      "homeLocation": "konoha", "trueLocation": "hokage_tower", "x": 0.486, "y": 0.470,
+      "trueX": 0.486, "trueY": 0.470, "scope": "local", "importance": "high",
+      "information_status": "confirmed", "status": "In the Hokage Tower",
+      "affiliations": [ "Konohagakure", "Sannin", "Medical Corps" ],
+      "recent": "Signed your Chunin field authorisation without looking up.",
+      "bio": "Legendary medic, legendary gambler, legendary temper. The village runs on her signature and her patience - both wear thin.",
+      "abilities": [ "Monstrous Strength", "Creation Rebirth", "Medical Ninjutsu (master)" ],
+      "initials": "ツ", "accent": "#7fbf8f", "scene": "assets/canon/search_for_tsunade_v1.webp"
+    },
+    "guy": {
+      "id": "guy", "name": "Might Guy", "role": "Jonin - Taijutsu Master",
+      "homeLocation": "konoha", "trueLocation": "training_ground_3", "x": 0.512, "y": 0.531,
+      "trueX": 0.512, "trueY": 0.531, "scope": "local", "importance": "medium",
+      "information_status": "confirmed", "status": "Running laps, of course",
+      "affiliations": [ "Konohagakure", "Team Guy" ],
+      "recent": "Offered you 500 laps of the village \"to ignite your springtime of youth.\"",
+      "bio": "All heart, all effort, no irony. The village's premier taijutsu specialist and Kakashi's self-declared eternal rival.",
+      "abilities": [ "Eight Gates", "Front Lotus", "Dynamic Entry" ],
+      "initials": "MG", "accent": "#5fae6f", "scene": "assets/scenes/academy_classroom.webp"
+    },
+    "sakura": {
+      "id": "sakura", "name": "Sakura Haruno", "role": "Genin - Medical-nin (training)",
+      "homeLocation": "konoha", "trueLocation": "hospital", "x": 0.500, "y": 0.478,
+      "trueX": 0.500, "trueY": 0.478, "scope": "local", "importance": "medium",
+      "information_status": "confirmed", "status": "At the hospital",
+      "affiliations": [ "Konohagakure", "Team 7", "Tsunade's apprentice" ],
+      "recent": "Compared training notes with you outside the hospital.",
+      "bio": "Tsunade's apprentice, sharp-minded and sharper-tempered. Chakra control most jonin would envy.",
+      "abilities": [ "Precision chakra control", "Medical Ninjutsu", "Chakra-enhanced strength (learning)" ],
+      "initials": "SH", "accent": "#dd8aa0", "scene": "assets/scenes/naruto_konohagakure.webp"
+    },
+    "gaara": {
+      "id": "gaara", "name": "Gaara", "role": "Fifth Kazekage - Jinchuriki of the One-Tail",
+      "homeLocation": "suna", "trueLocation": "suna", "x": 0.181, "y": 0.63,
+      "trueX": 0.181, "trueY": 0.63, "scope": "regional", "importance": "high",
+      "information_status": "confirmed", "status": "In Sunagakure",
+      "affiliations": [ "Sunagakure" ],
+      "recent": "You have not met. His name is on every Akatsuki intercept.",
+      "bio": "Young Kazekage of the Sand. Carries the One-Tail and the weight of a village that once feared him.",
+      "abilities": [ "Absolute Defence (sand)", "Sand Tsunami", "Desert Coffin" ],
+      "initials": "我", "accent": "#d8b878", "scene": "assets/scenes/naruto_sunagakure.webp"
+    },
+    "danzo": {
+      "id": "danzo", "name": "Danzo Shimura", "role": "Elder - Root Commander (unconfirmed)",
+      "homeLocation": "konoha", "trueLocation": "konoha", "x": 0.455, "y": 0.472,
+      "trueX": 0.455, "trueY": 0.472, "scope": "local", "importance": "medium",
+      "information_status": "confirmed", "status": "On the Konoha Council",
+      "affiliations": [ "Konohagakure", "Konoha Council", "Root" ],
+      "recent": "Has never spoken to you directly. His office has, twice, about paperwork.",
+      "bio": "A war-hero elder with a bandaged eye and a private army the village pretends not to have. His command of Root is unconfirmed.",
+      "abilities": [ "Wind & Water Release", "Unknown implanted techniques" ],
+      "initials": "ダ", "accent": "#9a6ec2", "scene": "assets/scenes/academy_classroom.webp"
+    }
+  },
+
+  "groups": {
+    "relief_column": {
+      "id": "relief_column", "type": "group", "name": "Konoha Relief Column", "faction": "konoha",
+      "scope": "regional", "importance": "medium",
+      "information_status": "confirmed", "status": "On the southern road",
+      "move": { "routeId": "relief_route", "durationDays": 8, "progress": 0.06, "status": "active", "auto": true },
+      "inspector": { "summary": "A supply and medical detachment bound for the Sand under joint escort. Publicly logged." }
+    },
+    "unknown_group": {
+      "id": "unknown_group", "type": "group", "name": "Unknown Shinobi Group", "faction": "unknown",
+      "x": 0.60, "y": 0.30, "trueX": 0.60, "trueY": 0.30, "scope": "regional", "importance": "medium",
+      "information_status": "unknown_identity", "status": "Moving through eastern Fire",
+      "inspector": { "summary": "An unidentified group has been tracked moving through the forests of eastern Fire Country. Numbers and allegiance unclear." }
+    }
+  },
+
+  "features": {
+    "unknown_hideout": {
+      "id": "unknown_hideout", "type": "hideout", "name": "Unknown Hideout",
+      "x": 0.598, "y": 0.345, "region": "land_of_fire", "scope": "regional", "importance": "medium",
+      "information_status": "unknown_identity", "status": "Unresolved",
+      "inspector": { "summary": "An abandoned complex in eastern Fire Country. Travellers report lights at night and fresh tracks. Identity unknown." },
+      "discovery": {
+        "name": "Former Orochimaru Laboratory", "importance": "high",
+        "summary": "Confirmed as one of Orochimaru's abandoned research sites. A sealed inner vault is believed intact."
+      }
+    },
+    "missing_nin": {
+      "id": "missing_nin", "type": "danger", "name": "Missing-nin Sighting",
+      "x": 0.44, "y": 0.69, "region": "land_of_rivers", "scope": "regional", "importance": "medium",
+      "information_status": "rumored", "status": "dormant",
+      "inspector": { "summary": "Unconfirmed reports of a rogue shinobi working the river trade road." }
+    }
+  },
+
+  "worldEvents": {
+    "border_patrol": {
+      "id": "border_patrol", "type": "mission", "name": "Border Patrol - Land of Rivers",
+      "x": 0.415, "y": 0.565, "region": "land_of_fire", "scope": "regional", "importance": "medium",
+      "information_status": "confirmed", "status": "available",
+      "inspector": { "summary": "Standing posting on the southern frontier. Open to Chunin. Escort, watch, and report." }
+    },
+    "akatsuki_suna": {
+      "id": "akatsuki_suna", "type": "world_event", "name": "Akatsuki Activity",
+      "x": 0.235, "y": 0.585, "region": "land_of_wind", "scope": "world", "importance": "high",
+      "information_status": "unconfirmed", "status": "rumoured",
+      "inspector": { "summary": "Intercepted couriers and vanished patrols point to an Akatsuki cell operating near the Sand. Unconfirmed." }
+    },
+    "training_op": {
+      "id": "training_op", "type": "training", "name": "Open Training - Ground Three",
+      "x": 0.505, "y": 0.523, "parent": "konoha", "scope": "local", "importance": "low",
+      "information_status": "confirmed", "status": "available",
+      "inspector": { "summary": "Morning drills clear the ground by mid-day. Equipment free to book; instructors sometimes linger." }
+    }
+  },
+
+  "routes": {
+    "ren_to_ame": {
+      "id": "ren_to_ame", "status": "planned", "kind": "covert",
+      "points": [ [0.478,0.492], [0.44,0.475], [0.39,0.462], [0.335,0.46] ]
+    },
+    "relief_route": {
+      "id": "relief_route", "status": "active", "kind": "supply",
+      "points": [ [0.478,0.492], [0.44,0.55], [0.36,0.60], [0.24,0.62], [0.185,0.628] ]
+    },
+    "kakashi_mission": {
+      "id": "kakashi_mission", "status": "planned", "kind": "mission",
+      "points": [ [0.505,0.523], [0.57,0.46], [0.62,0.41], [0.64,0.39] ]
+    }
+  },
+
+  "scenarios": {
+    "kakashi_mission": {
+      "chronicle": "Kakashi Hatake left Konoha before dawn on a sealed assignment, heading east.",
+      "toast": "Kakashi is on assignment",
+      "note": "On assignment", "status": "On assignment - heading east"
+    },
+    "kakashi_intel": {
+      "chronicle": "A field report places Kakashi near the eastern border of the Land of Fire.",
+      "toast": "Field report - Kakashi near Fire's eastern border",
+      "reportedX": 0.628, "reportedY": 0.402,
+      "note": "Field report: eastern border of Fire Country"
+    },
+    "missing_nin": {
+      "chronicle": "Travellers report a missing-nin working the river road through the Land of Rivers.",
+      "toast": "Missing-nin sighting - Land of Rivers",
+      "dangerRegion": "land_of_rivers", "dangerLevel": "moderate"
+    },
+    "hideout_investigate": {
+      "chronicle": "Scouts confirm the abandoned complex in eastern Fire is a former Orochimaru laboratory.",
+      "toast": "Hideout identified - Orochimaru laboratory"
+    },
+    "political_shift": {
+      "chronicle": "Amegakure's borders fall openly under Akatsuki control. The Rain answers to them now.",
+      "toast": "Political shift - Land of Rain -> Akatsuki",
+      "region": "land_of_rain", "newController": "akatsuki", "danger": "high", "relationship": "hostile"
+    },
+    "gaara_trigger": {
+      "chronicle": "CANON - The Kazekage has been taken. The Gaara Rescue Crisis begins, with or without you."
+    }
+  }
+}

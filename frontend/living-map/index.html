@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Worldwalker — Living Map Prototype</title>
+<link rel="icon" href="assets/favicon.ico" />
+<link rel="stylesheet" href="css/prototype.css" />
+</head>
+<body class="production-map">
+
+<!-- ============ TOP BAR ============ -->
+<header class="topbar">
+  <div class="brand">
+    <img class="brand-emblem" src="assets/worldwalker-emblem.png" alt="Worldwalker emblem" />
+    <div class="brand-text">
+      <span class="brand-title">WORLDWALKER</span>
+      <span class="brand-sub">Living Map · <em id="mapCampaignWorld">Campaign</em></span>
+    </div>
+  </div>
+
+  <div class="timeline" id="timeline">
+    <div class="timeline-era">
+      <span class="timeline-label">Canon Timeline</span>
+      <span class="timeline-date" id="timelineDate">Early Shippuden — Spring · Day 1</span>
+    </div>
+    <div class="canon-chip" id="canonChip" title="Canon events keep approaching whether or not the player takes part.">
+      <span class="canon-glyph">☯</span>
+      <span class="canon-name">Gaara Rescue Crisis</span>
+      <span class="canon-state" id="canonState">approaching</span>
+    </div>
+  </div>
+
+  <div class="topbar-right">
+    <label class="datasrc" title="Development-only: which state feeds the renderer">
+      <span>data source</span>
+      <select id="dataSourceSel">
+        <option value="live">Live Worldwalker</option>
+        <option value="real">Real Campaign Copy</option>
+        <option value="demo">Demo Campaign</option>
+      </select>
+    </label>
+    <span class="live-status" id="liveStatus" data-state="disconnected" hidden title="">LIVE · Disconnected</span>
+    <div class="mapmodes" id="mapModes" role="tablist" aria-label="Map modes">
+      <button class="mode-btn is-active" data-mode="political">Political</button>
+      <button class="mode-btn" data-mode="danger">Danger</button>
+      <button class="mode-btn" data-mode="relationships">Relationships</button>
+      <button class="mode-btn" data-mode="events">Events</button>
+    </div>
+    <button class="info-btn" id="infoBtn" title="About the Living Map" aria-label="About the Living Map">?</button>
+    <button class="info-btn" id="mapCloseBtn" title="Return to game" aria-label="Return to game">×</button>
+  </div>
+</header>
+
+<!-- ============ BODY GRID ============ -->
+<main class="stage-grid">
+
+  <!-- LEFT: player character panel -->
+  <aside class="panel panel--player" id="playerPanel"></aside>
+
+  <!-- CENTER: layered, pannable world map -->
+  <section class="map-viewport">
+    <div class="map-stage" id="mapStage">
+
+      <!-- everything that pans / zooms WITH the artwork -->
+      <div id="mapScaler">
+        <svg id="regionSvg" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <svg id="routeSvg"  viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true"></svg>
+      </div>
+
+      <!-- constant-size overlay markers, positioned by JS -->
+      <div class="marker-layer" id="markerLayer"></div>
+
+      <div class="zoom-pill" id="zoomPill">World <span>view</span></div>
+
+      <div class="map-controls">
+        <button class="map-ctl" id="ctlZoomIn"  title="Zoom in">+</button>
+        <button class="map-ctl" id="ctlZoomOut" title="Zoom out">−</button>
+        <button class="map-ctl" id="ctlFocus"   title="Focus player">◉</button>
+        <button class="map-ctl" id="ctlReset"   title="Reset view">⤢</button>
+      </div>
+
+      <div class="map-ribbon">
+        <span>The map shows what the world reveals.</span>
+        <span class="map-ribbon-dim">The engine knows the rest.</span>
+      </div>
+
+      <div class="readonly-tag" id="readonlyTag" hidden>◉ Real Campaign Copy — read-only mirror</div>
+      <div class="combat-tag" id="combatTag" hidden>⚔ Combat active — being resolved in Worldwalker</div>
+    </div>
+    <div class="map-legend" id="mapLegend"></div>
+  </section>
+
+  <!-- RIGHT: context inspector -->
+  <aside class="panel panel--inspector" id="inspector"></aside>
+
+</main>
+
+<!-- ============ BOTTOM DOCK ============ -->
+<footer class="dock">
+
+  <section class="chronicle" id="chroniclePanel">
+    <div class="chronicle-head">
+      <h2>Chronicle</h2>
+      <div class="chron-filters" id="chronFilters">
+        <button class="chip is-active" data-filter="all">All</button>
+        <button class="chip" data-filter="mine">Mine</button>
+        <button class="chip" data-filter="world">World</button>
+        <button class="chip" data-filter="canon">Canon</button>
+      </div>
+    </div>
+    <ol class="chronicle-list" id="chronicleList"></ol>
+  </section>
+
+  <section class="composer">
+    <div class="composer-head">
+      <span class="composer-kicker">Freeform action</span>
+      <span class="composer-hint">Shortcuts show common actions. <strong>You can attempt anything.</strong></span>
+    </div>
+
+    <form class="composer-form" id="actionForm" autocomplete="off">
+      <input type="text" id="actionInput" name="action" placeholder="What do you do?"
+             aria-label="Type a freeform action" />
+      <button type="submit" class="act-btn">Act</button>
+    </form>
+
+    <div class="shortcuts" id="shortcuts">
+      <span class="shortcuts-label">Try:</span>
+      <button class="shortcut" data-fill="Ask Kakashi to teach me the Chidori and evaluate my lightning control">Ask Kakashi to train Chidori</button>
+      <button class="shortcut" data-fill="Quietly slip out of the village and travel to Amegakure covertly">Slip away to Amegakure covertly</button>
+      <button class="shortcut" data-fill="Investigate Root and Danzō's movements inside the village">Investigate Root</button>
+      <button class="shortcut" data-fill="Train for three weeks">Train for three weeks</button>
+      <button class="shortcut shortcut--tick" id="advanceDayBtn">▸ Advance 1 Day</button>
+      <button class="shortcut shortcut--dir" id="directorBtn">⚙ Director</button>
+      <button class="shortcut shortcut--dir" id="diagBtn">▤ Diagnostics</button>
+    </div>
+  </section>
+
+</footer>
+
+<!-- Production-shape mobile navigation. The real game already owns these
+     destinations; this prototype proves the Living Map can occupy one tab. -->
+<nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Mobile navigation">
+  <button type="button" data-mobile-view="chronicle" aria-selected="false"><span aria-hidden="true">☷</span>Chronicle</button>
+  <button type="button" data-mobile-view="actions" aria-selected="false"><span aria-hidden="true">✎</span>Actions</button>
+  <button type="button" data-mobile-view="character" aria-selected="false"><span aria-hidden="true">♙</span>Character</button>
+  <button type="button" data-mobile-view="map" aria-selected="true"><span aria-hidden="true">⌖</span>Map</button>
+  <button type="button" data-mobile-view="more" aria-selected="false"><span aria-hidden="true">•••</span>More</button>
+</nav>
+
+<!-- ============ DIAGNOSTICS DRAWER (development-only) ============ -->
+<aside class="diag-drawer" id="diagDrawer" hidden>
+  <div class="diag-head">
+    <h3>Real campaign — diagnostics</h3>
+    <button class="scene-close" id="diagClose" aria-label="Close">✕</button>
+  </div>
+  <div class="diag-body" id="diagBody"></div>
+</aside>
+
+<!-- ============ SCENE / EVENT OVERLAY ============ -->
+<div class="scene-overlay" id="sceneOverlay" hidden>
+  <div class="scene-card" id="sceneCard">
+    <button class="scene-close" id="sceneClose" aria-label="Dismiss">✕</button>
+    <div class="scene-bg" id="sceneBg"></div>
+    <div class="scene-body">
+      <div class="scene-portrait" id="scenePortrait"></div>
+      <div class="scene-main">
+        <span class="scene-kicker" id="sceneKicker">EVENT</span>
+        <h3 class="scene-title" id="sceneTitle"></h3>
+        <p class="scene-narrative" id="sceneNarrative"></p>
+        <div class="scene-context" id="sceneContext"></div>
+        <div class="scene-actions">
+          <button class="scene-accept" id="sceneAccept">Accept</button>
+          <form class="scene-alt" id="sceneAltForm">
+            <input type="text" id="sceneAltInput" placeholder="…or do something completely different" />
+            <button type="submit">Do this instead</button>
+          </form>
+        </div>
+        <p class="scene-foot">Shortcuts show common actions. You can attempt anything.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DIRECTOR POPOVER (development-only) ============ -->
+<div class="director-pop" id="directorPop" hidden></div>
+
+<!-- ============ ABOUT MODAL ============ -->
+<div class="about-overlay" id="aboutOverlay" hidden>
+  <div class="about-card">
+    <button class="scene-close" id="aboutClose" aria-label="Close">✕</button>
+    <h3>What this prototype is</h3>
+    <p>An architecture test for a graphical, map-driven Worldwalker — presentation in the spirit of
+       Crusader Kings and Pax Historia, keeping Worldwalker's freeform typed actions, canon timeline
+       and relationships. No real mechanics; a handful of demo state-events.</p>
+    <ul class="about-principles">
+      <li><strong>Graphics represent the world.</strong></li>
+      <li><strong>The engine determines reality.</strong></li>
+      <li><strong>Freeform text represents player freedom.</strong></li>
+    </ul>
+    <p class="about-dim">The player can see the living world. The simulation only tracks how reliable
+       each piece of information is (confirmed / rumored / unconfirmed / unknown identity) — it does
+       not hide places, people or events. The base artwork never changes: soft influence washes,
+       routes, entities and event markers are separate layers drawn above it, and zoom decides how
+       much detail you see.</p>
+    <p class="about-dim"><b>Data source</b> (top bar, dev-only): <b>Demo Campaign</b> (interactive fixture),
+       <b>Real Campaign Copy</b> (READ-ONLY copy of a real save, <code>sample_data/real_naruto_save.json</code>),
+       or <b>Live Worldwalker</b> (READ-ONLY poll of a running campaign via the local bridge —
+       <code>bridge_proxy.py</code> forwards only GET <code>/api/state</code>, <code>/api/panels</code>,
+       <code>/api/combat/state</code>). All three feed the same renderer through <code>js/adapter.js</code>.
+       Nothing writes back to the game, its saves, or the network. The <b>Diagnostics</b> drawer reports
+       what resolved and what did not.</p>
+  </div>
+</div>
+
+<div class="toast-stack" id="toastStack"></div>
+
+<script src="js/adapter.js"></script>
+<script src="js/prototype.js"></script>
+</body>
+</html>
