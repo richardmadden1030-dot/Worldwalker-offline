@@ -304,7 +304,7 @@
     </section>
 
     <section class="panel composer-card action-chat-card no-collapse">
-      <header class="panel-head"><span><i class="panel-head-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></i>Action Chat</span></header>
+      <header class="panel-head"><span id="action-chat-title"><i class="panel-head-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></i><span id="action-chat-title-text">Action Chat</span></span></header>
       <div class="panel-body">
         <div class="mobile-queue-tools">
           <button id="btn-mobile-queue-toggle" type="button" aria-expanded="true">Queued plan <b id="mobile-queue-count">0</b></button>
@@ -632,8 +632,12 @@
 
 <div class="modal-backdrop" id="modal-settings">
   <div class="modal modal-lg">
-    <header class="modal-head"><span>AI &amp; Portrait Setup</span><button class="modal-close" data-close="modal-settings">✕</button></header>
+    <header class="modal-head"><span>Gameplay, AI &amp; Portrait Setup</span><button class="modal-close" data-close="modal-settings">✕</button></header>
     <div class="modal-body">
+      <section class="offline-settings-card">
+        <label class="offline-settings-toggle"><input type="checkbox" id="st-offline-mode" /><span><b>OFFLINE MODE</b><small>Play Worldwalker without a language model. Free typing is replaced by Activities, missions, Storylets, local combat, training, travel and relationship choices.</small></span></label>
+        <p class="hint">Offline Mode uses the same campaign save, Character, Chronicle, Living Map, powers/forms, organizations and combat systems. You can turn it off later and continue the same campaign with AI.</p>
+      </section>
       <label>AI Mode</label>
       <div class="radio-row">
         <label><input type="radio" name="provider" value="local" checked /> LOCAL — LM Studio (FREE)</label>
@@ -1007,6 +1011,16 @@
         <button id="btn-power-goal-cancel" class="btn-ghost">Reconsider</button>
         <button id="btn-power-goal-confirm" class="btn-primary">Commit to This Path</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop offline-event-backdrop" id="modal-offline-event">
+  <div class="modal offline-event-modal" role="dialog" aria-modal="true" aria-labelledby="offline-event-title">
+    <header class="modal-head"><span><b id="offline-event-title">A New Development</b><small>Offline Storylet</small></span></header>
+    <div class="modal-body">
+      <p id="offline-event-prompt" class="offline-event-prompt"></p>
+      <div id="offline-event-options" class="offline-event-options" role="list"></div>
     </div>
   </div>
 </div>

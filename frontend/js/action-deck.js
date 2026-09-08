@@ -1,5 +1,6 @@
-// The Action Deck is a local, context-aware front door to the same freeform
-// AI composer. It never resolves an action by itself and never limits typing.
+// The Action Deck is Worldwalker's context-aware activity browser. In AI mode it
+// feeds the freeform composer; in Offline Mode it resolves structured activities
+// directly against the same campaign state without any model call.
 const ACTION_CATEGORIES = [
   { id: "recommended", label: "For you", icon: "◇" },
   { id: "people", label: "People", icon: "◎" },
@@ -43,7 +44,7 @@ function actionDeckPeople(state = APP.state || {}) {
   return rows.slice(0, 30);
 }
 function actionDeckLocations(state = APP.state || {}) {
-  const names = new Set();
+  const names = new Set(Array.isArray(state._offline_locations) ? state._offline_locations : []);
   Object.keys(state.location_details || {}).forEach((name) => names.add(name));
   const custom = Array.isArray(state.custom_locations) ? state.custom_locations : Object.values(state.custom_locations || {});
   custom.forEach((row) => names.add(typeof row === "object" ? row.name : row));
@@ -133,6 +134,12 @@ function buildActionDeckChoices(state = APP.state || {}, personName = "") {
   const person = personName ? people.find((row) => normalizePersonName(row.name) === normalizePersonName(personName)) || { name: personName } : null;
   if (person) return personInteractionChoices(person, state);
   const choices = [];
+  if (APP.offlineMode && state.active_canon_event) {
+    const title = String(state.active_canon_event);
+    choices.push(actionChoice("offline-canon:engage", "recommended", `Get involved — ${title}`, "Intervene directly in the active canon event using a local Worldwalker check.", title));
+    choices.push(actionChoice("offline-canon:protect", "recommended", "Protect people and limit harm", "Take a supporting role focused on safety and immediate consequences.", title));
+    choices.push(actionChoice("offline-canon:observe", "recommended", "Observe without taking the lead", "Stay outside the center of the event and learn only what you could plausibly witness.", title));
+  }
   (state.suggested_actions || []).slice(0, 5).forEach((text, index) => choices.push(actionChoice(`suggested:${index}:${text}`, "recommended", text, "Suggested from the current scene and campaign state.", text)));
   const hpRatio = Number(state.hp || 0) / Math.max(1, Number(state.hp_max || 1));
   choices.push(actionChoice("personal-rest", "personal", hpRatio < .75 ? "Rest and recover" : "Take a proper rest", "Recover from exertion and allow ordinary needs to be addressed.", "Rest and recover properly", { duration: "hour" }));
@@ -158,7 +165,11 @@ function buildActionDeckChoices(state = APP.state || {}, personName = "") {
   actionDeckLocations(state).forEach((name) => choices.push(actionChoice(`travel:${name}`, "travel", `Travel to ${name}`, "Use an established route and an appropriate method of travel.", `Travel to ${name}`, { duration: "hour" })));
   choices.push(actionChoice("travel-explore", "travel", "Explore nearby", "Look around the current area without committing to a distant journey.", "Explore the area around my current location", { duration: "hour" }));
   (state.quests || []).filter(q => typeof q !== "object" || !/complete|failed|cancelled|abandoned/i.test(q.status || "")).slice(0, 5).forEach((quest, index) => { const name = typeof quest === "object" ? (quest.name || quest.title || `Current objective ${index + 1}`) : quest; choices.push(actionChoice(`quest:${name}`, "missions", `Work on ${name}`, "Make concrete progress using the time selected.", `Work toward ${name}`, { duration: "hour" })); });
-  choices.push(actionChoice("missions-work", "missions", "Look for work", "Find appropriate paid, official or informal work.", "Look for work appropriate to my abilities and position"));
+  if (APP.offlineMode) {
+    const board = Array.isArray(state.offline_mode?.mission_board) ? state.offline_mode.mission_board : [];
+    board.slice(0, 5).forEach((offer) => choices.push(actionChoice(`offline-accept:${offer.id}`, "missions", `Accept: ${offer.name}`, offer.objective || "Accept this grounded local opportunity.", offer.name, { duration: "moment", offlineOffer: true })));
+  }
+  choices.push(actionChoice("missions-work", "missions", APP.offlineMode ? "Review opportunities" : "Look for work", APP.offlineMode ? "Refresh the grounded local mission board for the current in-game day." : "Find appropriate paid, official or informal work.", "Look for work appropriate to my abilities and position"));
   choices.push(actionChoice("missions-investigate", "missions", "Investigate a problem", "Follow a known lead or examine a current concern.", "Investigate the most relevant unresolved problem available to me", { duration: "hour" }));
   const group = state._organization_roster;
   choices.push(actionChoice("group-meeting", "organization", `Call a ${group?.label ? group.label.toLowerCase() : "group"} meeting`, "Gather associated members for reports, discussion or planning.", "Call a meeting of my full group"));
@@ -188,6 +199,10 @@ function renderActionDeckMiniList(selector, rows, emptyText) {
 }
 function renderActionDeck() {
   const state = APP.state || {};
+  $("#action-deck-title").textContent = APP.offlineMode ? "Activities" : "Choose an action";
+  $("#action-deck-write").hidden = !!APP.offlineMode;
+  const durationControl = $("#action-deck-duration")?.closest("label");
+  if (durationControl) durationControl.hidden = !!APP.offlineMode;
   const choices = buildActionDeckChoices(state, actionDeckPerson);
   const activeCategory = actionDeckPerson ? "people" : actionDeckCategory;
   const categories = $("#action-deck-categories");
@@ -202,7 +217,7 @@ function renderActionDeck() {
   } else {
     personBox.hidden = true;
     personBox.replaceChildren();
-    $("#action-deck-context").textContent = `${state.location || "Current location"}. ${state.world || "Current world"}`;
+    $("#action-deck-context").textContent = APP.offlineMode ? `${state.location || "Current location"} · choose what to do next` : `${state.location || "Current location"}. ${state.world || "Current world"}`;
   }
   const filtered = choices.filter((row) => row.category === activeCategory).slice(0, actionDeckPerson ? 12 : 10);
   const favorites = readActionDeckStore("favorites");
@@ -217,6 +232,10 @@ function renderActionDeck() {
   $("#action-deck-queue-count").textContent = `${(state.queued_actions || []).length} queued`;
 }
 function openActionDeck(personName = "") {
+  if (APP.offlineMode && APP.state?.offline_mode?.pending_event && !personName) {
+    openOfflineEvent(APP.state.offline_mode.pending_event);
+    return;
+  }
   actionDeckPerson = personName || "";
   actionDeckCategory = personName ? "people" : "recommended";
   actionDeckDurationTouched = false;
@@ -224,16 +243,57 @@ function openActionDeck(personName = "") {
   renderActionDeck();
   openModal("modal-action-deck");
 }
+function rememberActionDeckChoice(action, duration) {
+  const saved = { id: action.id, label: action.label, text: action.text, description: action.description, category: action.category, person: action.person?.name || actionDeckPerson || "", duration };
+  const recent = [saved, ...readActionDeckStore("recent").filter((row) => row.id !== saved.id)].slice(0, 8);
+  writeActionDeckStore("recent", recent);
+}
+async function runOfflineAction(action) {
+  if (!action || APP.busy) return;
+  const duration = action.duration || "moment";
+  rememberActionDeckChoice(action, duration);
+  const clicked = document.querySelector(`[data-action-choice="${CSS.escape(action.id)}"]`);
+  if (clicked) clicked.closest(".action-choice")?.classList.add("resolving");
+  try {
+    const result = await apiPost("/api/offline/action", { id: action.id, label: action.label, person: action.person?.name || actionDeckPerson || "", duration });
+    closeModal("modal-action-deck");
+    APP.offlineMode = true;
+    if (Array.isArray(result.story) && result.story.length) appendStoryEntries(result.story);
+    if (result.state) renderState(result.state);
+    refreshOfflinePresentation();
+    if (result.event) openOfflineEvent(result.event);
+    else if (result.message) showToast(result.message, result.combat_active ? "danger" : "notify");
+  } catch (error) {
+    showToast(error.message, "danger");
+    renderActionDeck();
+  }
+}
+function openOfflineEvent(event) {
+  if (!event) return;
+  $("#offline-event-title").textContent = event.title || "A New Development";
+  $("#offline-event-prompt").textContent = event.prompt || "Something has changed.";
+  const box = $("#offline-event-options");
+  box.innerHTML = (event.options || []).map((option) => `<button type="button" data-offline-event-id="${escapeHtml(event.id)}" data-offline-option-id="${escapeHtml(option.id)}"><span><b>${escapeHtml(option.label)}</b><small>Your choice changes the same campaign state and Chronicle.</small></span><i aria-hidden="true">›</i></button>`).join("");
+  openModal("modal-offline-event");
+}
+async function resolveOfflineEvent(eventId, optionId) {
+  try {
+    const result = await apiPost("/api/offline/event", { event_id: eventId, option_id: optionId });
+    closeModal("modal-offline-event");
+    if (Array.isArray(result.story) && result.story.length) appendStoryEntries(result.story);
+    if (result.state) renderState(result.state);
+    showToast(result.message || "The development is resolved.", "notify");
+  } catch (error) { showToast(error.message, "danger"); }
+}
 function placeActionInComposer(action) {
   if (!action) return;
+  if (APP.offlineMode) { runOfflineAction(action); return; }
   const duration = actionDeckDurationTouched ? ($("#action-deck-duration").value || "moment") : (action.duration || "moment");
   const text = actionTextWithDuration(action, duration);
   const input = $("#action-input");
   input.value = input.value.trim() ? `${input.value.trim()}\n${text}` : text;
   saveMobileDraft();
-  const saved = { id: action.id, label: action.label, text: action.text, description: action.description, category: action.category, person: action.person?.name || actionDeckPerson || "", duration };
-  const recent = [saved, ...readActionDeckStore("recent").filter((row) => row.id !== saved.id)].slice(0, 8);
-  writeActionDeckStore("recent", recent);
+  rememberActionDeckChoice(action, duration);
   closeModal("modal-action-deck");
   setMobileView("actions", false);
   input.focus(); input.setSelectionRange(input.value.length, input.value.length);

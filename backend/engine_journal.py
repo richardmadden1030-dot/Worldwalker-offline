@@ -327,4 +327,6 @@ class JournalMixin:
         if self.state.get("world") == "Solo Max-Level Newbie" and isinstance(deadline, (int, float)) and not self.state.get("tower_over"):
             s["_tower_days_left"] = max(0, int(deadline - self.state.get("canon_day", 0)))
         s["_tension"] = tension_level(self.state)
+        if getattr(self, "offline_mode_enabled", lambda: False)():
+            s["_offline_locations"] = self.offline_locations()
         return s

@@ -861,8 +861,13 @@ def api_campaign_preview_reroll():
 
 @app.route("/api/campaign/opening", methods=["POST"])
 def api_campaign_opening():
+    if game.offline_mode_enabled():
+        try:
+            return jsonify(game.offline_opening())
+        except Exception as e:
+            return err(e, 400)
     if not game.ai_ready():
-        return jsonify({"error": "AI not configured. Open Settings and select a model."}), 400
+        return jsonify({"error": "AI not configured. Open Settings and select a model, or enable Offline Mode."}), 400
     if not acquire_busy():
         return busy_error()
     try:
@@ -877,10 +882,37 @@ def api_campaign_opening():
 # ---------- turn loop ----------
 @app.route("/api/state")
 def api_state():
+    if game.offline_mode_enabled():
+        try: game.offline_sync_combat_missions()
+        except Exception: pass
     return jsonify({"state": request_public_state(), "busy": game.busy, "campaign_active": game.campaign_active,
-                     "tactical_story":game.story_log[-300:] if tactical_feature_enabled() and game.state.get('world') in {'Naruto','One Piece','Bleach'} and not getattr(g,'worldwalker_room',None) else [],
+                     # Chronicle history belongs to every campaign, not only tactical worlds.
+                     "tactical_story":game.story_log[-300:] if not getattr(g,'worldwalker_room',None) else [],
                      "ai_ready": game.ai_ready(), "ai_connection_status": game.settings.get("ai_connection_status", "untested"),
+                     "offline_mode": game.offline_mode_enabled(),
                      "local_mode": game.local_mode()})
+
+
+@app.route("/api/offline/action", methods=["POST"])
+def api_offline_action():
+    if not game.offline_mode_enabled():
+        return jsonify({"error": "Offline Mode is not enabled."}), 409
+    d = request.get_json(force=True)
+    try:
+        return jsonify(game.offline_action(d.get("id", ""), d.get("label", ""), d.get("person", ""), d.get("duration", "moment")))
+    except Exception as e:
+        return err(e, 400)
+
+
+@app.route("/api/offline/event", methods=["POST"])
+def api_offline_event():
+    if not game.offline_mode_enabled():
+        return jsonify({"error": "Offline Mode is not enabled."}), 409
+    d = request.get_json(force=True)
+    try:
+        return jsonify(game.offline_event_choice(d.get("event_id", ""), d.get("option_id", "")))
+    except Exception as e:
+        return err(e, 400)
 
 
 @app.route("/api/action/submit", methods=["POST"])
@@ -1002,7 +1034,11 @@ def api_naruto_tactical():
                 persist_members(game,_multiplayer_store,room['id'],participants)
                 return result
             return submit_naruto_action(game,payload)
-        return jsonify(atomic_game_call('naruto_tactical',payload,apply))
+        result = atomic_game_call('naruto_tactical',payload,apply)
+        if game.offline_mode_enabled() and not game.combat_active():
+            game.offline_sync_combat_missions()
+            if isinstance(result, dict): result['state'] = request_public_state()
+        return jsonify(result)
     except Exception as e:
         return err(e,400)
     finally:
@@ -1062,6 +1098,9 @@ def api_combat_action():
     try:
         result = atomic_game_call("combat_action", {**d, "action": action, "ability": d.get("ability")},
                                   lambda: game.resolve_combat_round(action, ability_name=d.get("ability")))
+        if game.offline_mode_enabled() and not game.combat_active():
+            game.offline_sync_combat_missions()
+            result["state"] = request_public_state()
         return jsonify(result)
     except Exception as e:
         return err(e, 400)
@@ -1320,6 +1359,8 @@ def _run_background_jobs(key, target_game):
 def api_background_run():
     key = _background_key()
     target_game = _request_game()
+    if target_game.offline_mode_enabled():
+        return jsonify({"started": False, "offline": True})
     with _bg_lock:
         state = _bg_state.setdefault(key, {"running": False, "pending": []})
         if state["running"] or target_game.busy:
@@ -1857,7 +1898,7 @@ def api_settings_post():
         "max_ai_cost_per_request_usd", "max_ai_cost_per_turn_usd", "max_ai_retries_per_turn", "session_budget_warning_usd",
         "narration", "autosave", "sound_enabled", "music_enabled", "music_volume", "animations_enabled",
         "portrait_generation_enabled", "portrait_auto_generate", "image_model", "image_provider", "local_image_base_url", "local_image_model", "portrait_quality", "developer_mode",
-        "onboarding_seen", "simulation_mode", "canon_foreknowledge", "local_reentry_recap", "local_combat_recap", "local_message_gate"
+        "onboarding_seen", "simulation_mode", "canon_foreknowledge", "local_reentry_recap", "local_combat_recap", "local_message_gate", "offline_mode"
     ] if k in d}
     settings_game = getattr(g, "worldwalker_personal_game", None) or game
     if any(key in patch for key in ("provider", "local_base_url", "local_token", "api_key", "model", "secondary_model", "major_event_model", "advisor_model", "advisor_provider", "creative_model", "creative_provider")):

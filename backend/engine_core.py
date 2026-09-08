@@ -77,6 +77,7 @@ DEFAULT_SETTINGS = {
     "canon_foreknowledge": False,
     "developer_mode": False,
     "onboarding_seen": False,
+    "offline_mode": True,
     "ai_connection_status": "untested",
     "ai_validated_model": "",
     "ai_validated_provider": "",

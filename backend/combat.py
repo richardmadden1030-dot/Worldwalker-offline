@@ -883,6 +883,16 @@ class CombatMixin:
         combat["death_prevented"] = death_prevented
         combat["active"] = False
         combat["outcome"] = outcome
+        self.state["last_combat"] = {
+            "turn": int(self.state.get("turn", 0) or 0),
+            "enemy": str(enemy.get("name") or "Opponent"),
+            "outcome": str(outcome),
+            "victory": outcome in {"victory", "overwhelmed", "objective_complete"},
+            "rounds": int(combat.get("round", 1) or 1),
+            "offline_generated": bool(combat.get("offline_generated")),
+            "offline_mission_id": str(combat.get("offline_mission_id") or ""),
+            "ended_at": str(self.state.get("canon_time_minutes", "")),
+        }
         normalize_encounter_state(self.state)
         # The round-by-round fight is the dangerous scenario.  Once it has a
         # mechanical outcome, later unrelated hard actions must be allowed to

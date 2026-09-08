@@ -52,6 +52,7 @@ DEFAULT_SETTINGS = {
     "local_image_model": "",
     "portrait_quality": "low",
     "developer_mode": False,
+    "offline_mode": True,
 }
 
 

@@ -191,6 +191,7 @@ const APP = {
   worldsMeta: null,
   state: null,
   campaignActive: false,
+  offlineMode: false,
   busy: false,
   soundEnabled: true,
   musicEnabled: true,
@@ -1580,6 +1581,7 @@ function renderActiveFormPanel(s) {
 }
 
 async function ensureAiPortrait(s, force = false) {
+  if (APP.offlineMode) return;
   if (!s || !APP.campaignActive || !s._portrait_generation_enabled || !s._portrait_generation_ready) return;
   const signature = s._portrait_signature;
   if (!signature || APP.portraitInFlight || (!force && (s._portrait_generated || APP.portraitAttempted.has(signature)))) return;
@@ -1820,6 +1822,25 @@ function animateStateChanges(previous, next) {
   });
 }
 
+function refreshOfflinePresentation() {
+  document.body.classList.toggle("offline-mode", !!APP.offlineMode);
+  const title = $("#action-chat-title-text");
+  if (title) title.textContent = APP.offlineMode ? "Activities" : "Action Chat";
+  const trigger = $("#btn-action-deck");
+  if (trigger) {
+    const b = trigger.querySelector("b"), small = trigger.querySelector("small"), icon = trigger.querySelector(".action-deck-trigger-icon");
+    if (b) b.textContent = APP.offlineMode ? "OPEN ACTIVITIES" : "CHOOSE AN ACTION";
+    if (small) small.textContent = APP.offlineMode ? "People, missions, training, travel, exploration, combat and more" : "People, training, travel, rest, missions and more";
+    if (icon) icon.textContent = APP.offlineMode ? "✦" : "＋";
+  }
+  const input = $("#action-input"), send = $("#btn-send");
+  if (input) {
+    input.disabled = !!APP.offlineMode || (!!APP.state?.combat?.active && ['Naruto','One Piece','Bleach'].includes(APP.state?.world));
+    if (APP.offlineMode) input.placeholder = "Offline Mode uses the Activities menu instead of free typing.";
+  }
+  if (send) send.disabled = !!APP.offlineMode;
+}
+
 function renderState(state) {
   if (window.WorldwalkerRosterSync) state._organization_roster = WorldwalkerRosterSync.reconcile(state?._organization_roster, state || {});
   const rosterLabel = state?._organization_roster?.label || "Group";
@@ -1830,6 +1851,7 @@ function renderState(state) {
   $("#turn-recovery-notice").hidden = !(state?.last_failed_turn?.route || APP.retryRequest);
   const previousState = APP.state;
   APP.state = state;
+  refreshOfflinePresentation();
   if (window.WorldwalkerTeamMembership) WorldwalkerTeamMembership.handle(state);
   restorePendingRequest(state);
   checkTrophyProposals(state);
@@ -2782,13 +2804,14 @@ function closeModal(id) {
 }
 $$(".modal-close").forEach((b) => b.addEventListener("click", () => closeModal(b.getAttribute("data-close"))));
 $$(".modal-backdrop").forEach((m) => m.addEventListener("click", (e) => {
-  const locked = new Set(["modal-auth", "modal-welcome", "modal-difficult-check", "modal-timing-challenge", "modal-tactical-challenge", "modal-major-roll", "modal-lethal", "modal-power-goal", "modal-event-window"]);
+  const locked = new Set(["modal-auth", "modal-welcome", "modal-difficult-check", "modal-timing-challenge", "modal-tactical-challenge", "modal-major-roll", "modal-lethal", "modal-power-goal", "modal-event-window", "modal-offline-event"]);
   if (e.target === m && !locked.has(m.id)) closeModal(m.id);
 }));
 
 $("#btn-action-deck").addEventListener("click", () => openActionDeck());
 $("#action-deck-duration").addEventListener("change", () => { actionDeckDurationTouched = true; });
 $("#action-deck-write").addEventListener("click", () => {
+  if (APP.offlineMode) return;
   closeModal("modal-action-deck");
   setMobileView("actions", false);
   $("#action-input").focus();
@@ -2834,6 +2857,12 @@ $("#modal-action-deck").addEventListener("click", (event) => {
     }
     placeActionInComposer(saved);
   } catch (_) { showToast("That saved action could not be opened.", "danger"); }
+});
+
+$("#offline-event-options").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-offline-event-id]");
+  if (!button) return;
+  resolveOfflineEvent(button.dataset.offlineEventId, button.dataset.offlineOptionId);
 });
 
 // Major/canon events use a short informational notice only. The event's
@@ -2941,6 +2970,7 @@ function setBusy(b) {
 }
 
 async function submitAction(text) {
+  if (APP.offlineMode) { openActionDeck(); showToast("Offline Mode uses structured Activities instead of free typing.", "system"); return; }
   if (APP.busy || !text) return;
   if (!APP.campaignActive) { showToast("Start a campaign first.", "system"); openModal("modal-campaign"); return; }
   if (window.WorldwalkerTeamMembership?.preflightJoin) {
@@ -5928,6 +5958,7 @@ async function openSettingsModal() {
   $("#st-api-key").value = "";
   $("#st-narration").value = s.narration || "Concise";
   $("#st-simulation-mode").value = s.simulation_mode || "balanced";
+  $("#st-offline-mode").checked = s.offline_mode === true;
   $("#st-autosave").checked = !!s.autosave;
   $("#st-sound").checked = !!s.sound_enabled;
   $("#st-music").checked = s.music_enabled !== false;
@@ -5997,6 +6028,7 @@ $("#btn-save-settings").addEventListener("click", async () => {
     session_budget_warning_usd: Number($("#st-session-budget").value || 0),
     narration: $("#st-narration").value,
     simulation_mode: $("#st-simulation-mode").value,
+    offline_mode: $("#st-offline-mode").checked,
     autosave: $("#st-autosave").checked,
     sound_enabled: $("#st-sound").checked,
     music_enabled: $("#st-music").checked,
@@ -6017,14 +6049,17 @@ $("#btn-save-settings").addEventListener("click", async () => {
   };
   if ($("#st-api-key").value.trim()) patch.api_key = $("#st-api-key").value.trim();
   await apiPost("/api/settings", patch);
-  try {
-    await testAiConnection(provider);
-  } catch (error) {
-    $("#detect-status").textContent = "SAVED, BUT AI COULD NOT BE VERIFIED";
-    $("#hdr-ai").textContent = "AI: CONNECTION INVALID";
-    showToast(error.message, "danger");
-    return;
+  if (!patch.offline_mode) {
+    try {
+      await testAiConnection(provider);
+    } catch (error) {
+      $("#detect-status").textContent = "SAVED, BUT AI COULD NOT BE VERIFIED";
+      $("#hdr-ai").textContent = "AI: CONNECTION INVALID";
+      showToast(error.message, "danger");
+      return;
+    }
   }
+  APP.offlineMode = patch.offline_mode;
   APP.soundEnabled = patch.sound_enabled;
   if (!APP.soundEnabled) stopWorldCue();
   APP.musicEnabled = patch.music_enabled;
@@ -6033,10 +6068,11 @@ $("#btn-save-settings").addEventListener("click", async () => {
   if (!APP.musicEnabled) musicPlayer().pause();
   APP.animationsEnabled = patch.animations_enabled;
   closeModal("modal-settings");
-  showToast(`AI mode: ${provider === "cloud" ? "OpenAI Cloud" : "Local LM Studio"} · ${patch.simulation_mode} simulation`, "system");
+  showToast(patch.offline_mode ? "Offline Mode enabled — Activities now resolve without AI." : `AI mode: ${provider === "cloud" ? "OpenAI Cloud" : "Local LM Studio"} · ${patch.simulation_mode} simulation`, "system");
   await refreshHeaderAiStatus();
   const refreshed = await apiGet("/api/state");
   APP.campaignActive = refreshed.campaign_active;
+  APP.offlineMode = !!refreshed.offline_mode;
   renderState(refreshed.state);
 });
 
@@ -6149,6 +6185,7 @@ async function refreshHeaderAiStatus() {
 }
 
 function aiStatusLabel(st) {
+  if (st.offline_mode || APP.offlineMode) return "OFFLINE MODE";
   if (st.ai_ready) return "AI: READY";
   if (st.ai_connection_status === "invalid") return "AI: CONNECTION INVALID";
   return st.ai_connection_status === "untested" ? "AI: READY TO TEST" : "AI: MODEL NOT SELECTED";
@@ -6648,6 +6685,7 @@ async function finishGameBoot() {
   APP.musicVolume = Number(settings.music_volume ?? .35);
   setMusicWidgetVolume(APP.musicVolume, false);
   APP.animationsEnabled = !!settings.animations_enabled;
+  APP.offlineMode = !!(settings.offline_mode || st.offline_mode);
   APP.campaignActive = st.campaign_active;
   renderState(st.state);
   $("#hdr-ai").textContent = aiStatusLabel(st);
@@ -6666,6 +6704,7 @@ async function finishGameBoot() {
       }]);
     } else {
       appendStoryEntries(Array.isArray(st.tactical_story) && st.tactical_story.length ? st.tactical_story : [{ text: "Welcome back to " + (st.state.world || "Worldwalker") + ".", tag: "system" }]);
+      if (APP.offlineMode && st.state?.offline_mode?.pending_event) setTimeout(() => openOfflineEvent(st.state.offline_mode.pending_event), 50);
     }
   } else {
     appendStoryEntries([

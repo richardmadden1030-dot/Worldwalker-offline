@@ -3616,3 +3616,71 @@ body[data-world="Custom World"] #attributes-panel .hidden-stats-label{ color:#8a
 .org-project-form{border-top:1px solid var(--line,rgba(255,255,255,.12));padding-top:10px}.public-reputation-summary b{font-size:1.05rem}.public-reputation-summary span,.public-reputation-summary small{opacity:.82}
 .reputation-row p,.property-card p,.org-assignment p{margin:0}.reputation-row span{font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
 @media(max-width:720px){.organization-command-card>header,.org-assignment>header,.property-card>header,.reputation-row>header{align-items:flex-start;flex-direction:column}.organization-command-card select,.organization-command-card input{width:100%}}
+
+/* -------------------------------------------------------------------------
+   Offline Mode — same Worldwalker shell, structured activity navigation
+   ------------------------------------------------------------------------- */
+.offline-settings-card{
+  margin:0 0 14px; padding:12px; border:1px solid rgba(var(--accent2-rgb),.38);
+  border-radius:10px; background:linear-gradient(135deg,rgba(var(--accent2-rgb),.10),rgba(var(--accent-rgb),.05));
+}
+.offline-settings-toggle{display:grid!important;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:10px;margin:0!important;cursor:pointer}
+.offline-settings-toggle input{margin-top:3px;accent-color:var(--accent2)}
+.offline-settings-toggle b,.offline-settings-toggle small{display:block}
+.offline-settings-toggle b{font-size:12px;letter-spacing:.11em;color:var(--accent2)}
+.offline-settings-toggle small{margin-top:4px;color:var(--sub);font-size:10.5px;line-height:1.45;font-weight:500;letter-spacing:0;text-transform:none}
+body.offline-mode #hdr-ai{border-color:rgba(var(--accent2-rgb),.58);color:var(--accent2);background:rgba(var(--accent2-rgb),.11)}
+body.offline-mode .composer-card .composer-row,
+body.offline-mode .composer-card .action-chat-hint,
+body.offline-mode .composer-card .mobile-queue-tools,
+body.offline-mode .composer-card #queued-actions{display:none!important}
+body.offline-mode .composer-card .panel-body{padding-top:12px}
+body.offline-mode .action-deck-trigger{min-height:68px;border-radius:12px;border-color:rgba(var(--accent2-rgb),.58);background:linear-gradient(135deg,rgba(var(--accent2-rgb),.13),rgba(var(--accent-rgb),.07));box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+body.offline-mode .action-deck-trigger-icon{width:38px;height:38px;border-radius:10px;font-size:19px;background:rgba(var(--accent2-rgb),.09)}
+body.offline-mode .action-deck-trigger b{font-size:12px;letter-spacing:.11em}
+body.offline-mode .action-deck-trigger small{font-size:10.5px;line-height:1.35}
+body.offline-mode .action-deck-modal{border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.48)}
+body.offline-mode .action-deck-categories{background:rgba(0,0,0,.09)}
+body.offline-mode .action-deck-categories button{min-height:48px;border-radius:8px;border-left:0;margin-bottom:4px;transition:background .18s var(--ease-out),transform .18s var(--ease-out),color .18s var(--ease-out)}
+body.offline-mode .action-deck-categories button[aria-pressed="true"]{background:linear-gradient(90deg,rgba(var(--accent2-rgb),.18),rgba(var(--accent-rgb),.06));box-shadow:inset 2px 0 0 var(--accent2)}
+body.offline-mode .action-choice{margin:0 0 7px;border:1px solid var(--border-soft);border-radius:11px;overflow:hidden;background:rgba(255,255,255,.018);animation:offlineChoiceIn .2s var(--ease-out) both}
+body.offline-mode .action-choice-main{min-height:72px;padding:10px 9px}
+body.offline-mode .action-choice-main:hover{background:linear-gradient(90deg,rgba(var(--accent2-rgb),.10),rgba(var(--accent-rgb),.04));transform:translateX(2px)}
+body.offline-mode .action-choice-icon{width:34px;height:34px;border-radius:9px;background:rgba(var(--accent2-rgb),.06)}
+body.offline-mode .action-choice.resolving{opacity:.55;pointer-events:none}
+body.offline-mode .action-choice.resolving::after{content:"Resolving…";align-self:center;padding-right:10px;color:var(--accent2);font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+body.offline-mode .action-deck-tools{min-height:18px}
+body.offline-mode .action-deck-side #action-deck-queue,
+body.offline-mode .action-deck-side #action-deck-ongoing,
+body.offline-mode .action-deck-side section:has(#action-deck-queue),
+body.offline-mode .action-deck-side section:has(#action-deck-ongoing){display:none}
+body.offline-mode .combat-freeform-hint{display:none}
+body.offline-mode .time-control-card{display:none!important}
+body.offline-mode .messages-card #btn-open-chat{display:none!important}
+.offline-event-backdrop{backdrop-filter:blur(8px)}
+.offline-event-modal{width:min(620px,92vw);border-radius:16px;overflow:hidden;animation:offlineEventIn .25s var(--ease-out)}
+.offline-event-modal .modal-head>span{display:grid;gap:2px}
+.offline-event-modal .modal-head small{color:var(--accent2);font-size:9px;letter-spacing:.11em;text-transform:uppercase}
+.offline-event-prompt{margin:0 0 12px;color:var(--text);font-size:14px;line-height:1.6}
+.offline-event-options{display:grid;gap:8px}
+.offline-event-options button{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;min-height:64px;padding:10px 12px;border:1px solid var(--border-soft);border-radius:11px;background:rgba(255,255,255,.025);color:var(--text);text-align:left;transition:border-color .18s var(--ease-out),background .18s var(--ease-out),transform .18s var(--ease-out)}
+.offline-event-options button:hover{border-color:rgba(var(--accent2-rgb),.6);background:rgba(var(--accent2-rgb),.08);transform:translateY(-1px)}
+.offline-event-options b,.offline-event-options small{display:block}
+.offline-event-options b{font-size:12px}.offline-event-options small{margin-top:3px;color:var(--muted);font-size:9.5px}.offline-event-options i{font-style:normal;color:var(--accent2);font-size:20px}
+@keyframes offlineChoiceIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@keyframes offlineEventIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@media(max-width:720px){
+  body.offline-mode .action-deck-modal{border-radius:18px 18px 0 0}
+  body.offline-mode .action-deck-main{padding:10px 9px}
+  body.offline-mode .action-choice{margin-bottom:8px}
+  body.offline-mode .action-choice-main{min-height:76px}
+  .offline-event-modal{width:100vw;border-radius:18px 18px 0 0;border-bottom:0}
+  .offline-event-backdrop{align-items:flex-end;padding:0}
+}
+@media(prefers-reduced-motion:reduce){
+  body.offline-mode .action-choice,.offline-event-modal{animation:none!important}
+  body.offline-mode .action-choice-main,.offline-event-options button{transition:none!important}
+}
+body.offline-mode #btn-open-advisor,
+body.offline-mode [data-mobile-open="advisor"],
+body.offline-mode #btn-portrait-regenerate{display:none!important}
