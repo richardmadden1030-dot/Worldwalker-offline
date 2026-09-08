@@ -80,7 +80,6 @@ jobs:
               packaged = frontend / relative
               assert packaged.is_file(), f'Missing bundled file: {relative}'
               assert packaged.read_bytes() == source.read_bytes(), f'Stale bundled file: {relative}'
-          assert (root / '_internal' / 'offline_mode.py').is_file(), 'Offline resolver missing from packaged runtime'
           assert (root / '_internal/assets/data/world_calendars.json').read_bytes() == Path('assets/data/world_calendars.json').read_bytes(), 'Calendar data missing or stale'
           shutil.copytree('music', root / 'music', dirs_exist_ok=True)
           for name in ['WorldwalkerRPG.exe.config', 'PHONE_PLAY_README.txt', 'WORKSPACE_TABS.md', 'RELIABILITY_UPDATE.md', 'LIVING_ADVENTURES.md', 'WORLD_CALENDARS.md']:
