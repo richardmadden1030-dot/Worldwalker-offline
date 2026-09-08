@@ -17,6 +17,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Verify staged patch integrity
+        shell: bash
+        run: |
+          echo "2e844743a2c0bbb45aafb8f121f416391306859df0e972f8c17d6b420f2eac93  .offline-reviewed-patch/payload00.b64" > /tmp/expected.sha256
+          echo "9c1dfc3c615c72aba913511e2a52ee2c19076aa243bfd4f96a2b56ad21a9b721  .offline-reviewed-patch/payload01.b64" >> /tmp/expected.sha256
+          echo "544e58d3f1d8d414c25ba02ed4dc12d97bc2a55a54032e6fc7e1ffef11444e4c  .offline-reviewed-patch/payload02.b64" >> /tmp/expected.sha256
+          wc -c .offline-reviewed-patch/payload*.b64
+          sha256sum .offline-reviewed-patch/payload*.b64
+          sha256sum -c /tmp/expected.sha256
       - name: Apply reviewed patch
         shell: bash
         run: |
