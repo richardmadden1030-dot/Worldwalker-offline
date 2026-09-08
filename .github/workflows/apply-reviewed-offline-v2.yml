@@ -1,11 +1,11 @@
-name: Apply reviewed native Offline Mode v2
+name: Apply reviewed native Offline Mode fixes
 
 on:
   push:
     branches:
       - offline-mode/reviewed-native-v2
     paths:
-      - ".offline-reviewed-ready"
+      - ".offline-fix-ready"
 
 permissions:
   contents: write
@@ -17,27 +17,22 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Verify staged patch integrity
+      - name: Verify regression fix integrity
         shell: bash
         run: |
-          echo "2e844743a2c0bbb45aafb8f121f416391306859df0e972f8c17d6b420f2eac93  .offline-reviewed-patch/payload00.b64" > /tmp/expected.sha256
-          echo "9c1dfc3c615c72aba913511e2a52ee2c19076aa243bfd4f96a2b56ad21a9b721  .offline-reviewed-patch/payload01.b64" >> /tmp/expected.sha256
-          echo "544e58d3f1d8d414c25ba02ed4dc12d97bc2a55a54032e6fc7e1ffef11444e4c  .offline-reviewed-patch/payload02.b64" >> /tmp/expected.sha256
-          wc -c .offline-reviewed-patch/payload*.b64
-          sha256sum .offline-reviewed-patch/payload*.b64
-          sha256sum -c /tmp/expected.sha256
-      - name: Apply reviewed patch
+          echo "477a20fc4462bc3b0558ed7000977a1da660c343e9a54b2a95303069e8612941  .offline-fix/payload.b64" | sha256sum -c -
+      - name: Apply regression fixes
         shell: bash
         run: |
-          cat .offline-reviewed-patch/payload*.b64 | base64 -d | gzip -dc > /tmp/offline-mode.patch
-          git apply --check /tmp/offline-mode.patch
-          git apply /tmp/offline-mode.patch
-          rm -rf .offline-reviewed-patch .offline-reviewed-ready
-      - name: Commit implementation
+          base64 -d .offline-fix/payload.b64 | gzip -dc > /tmp/offline-fix.patch
+          git apply --check /tmp/offline-fix.patch
+          git apply /tmp/offline-fix.patch
+          rm -rf .offline-fix .offline-fix-ready
+      - name: Commit fixes
         shell: bash
         run: |
           git config user.name "worldwalker-offline-bot"
           git config user.email "actions@users.noreply.github.com"
           git add -A
-          git commit -m "Add reviewed native model-free Offline Mode"
+          git commit -m "Fix Offline Mode compatibility regressions"
           git push origin HEAD:offline-mode/reviewed-native-v2
