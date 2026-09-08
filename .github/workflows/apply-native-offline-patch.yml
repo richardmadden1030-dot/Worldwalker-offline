@@ -20,7 +20,7 @@ jobs:
       - name: Apply reviewed Offline Mode changes
         shell: bash
         run: |
-          cat .offline-patch/part* > /tmp/offline-mode.patch
+          cat .offline-patch/payload*.b64 | base64 -d | gzip -dc > /tmp/offline-mode.patch
           git apply --check /tmp/offline-mode.patch
           git apply /tmp/offline-mode.patch
           rm -rf .offline-patch .offline-patch-ready
