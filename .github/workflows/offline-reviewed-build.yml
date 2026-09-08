@@ -1,0 +1,113 @@
+name: Verify and build reviewed Worldwalker Offline
+
+on:
+  push:
+    branches:
+      - offline-mode/reviewed-native-v2
+    paths:
+      - '.github/workflows/offline-reviewed-build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: reviewed-offline-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  regressions:
+    if: github.ref == 'refs/heads/offline-mode/reviewed-native-v2'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      WORLDWALKER_DATA_DIR: ${{ github.workspace }}/.build-test-data
+      PYTHONUTF8: '1'
+      PYTHONPATH: '${{ github.workspace }}/backend:${{ github.workspace }}/tests:${{ github.workspace }}/tools'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install test dependencies
+        run: python -m pip install -r requirements.txt pytest playwright pillow
+      - name: Install Chromium
+        run: python -m playwright install --with-deps chromium
+      - name: Check UI JavaScript syntax
+        shell: python
+        run: |
+          import subprocess
+          from pathlib import Path
+          paths = [*Path('frontend/js').glob('*.js'), Path('frontend/sw.js'), Path('frontend/tactical/campaign.js')]
+          for path in paths:
+              subprocess.run(['node', '--check', str(path)], check=True)
+      - name: Run Offline Mode tests first
+        run: python -m pytest tests/test_offline_mode.py -q
+      - name: Run full Worldwalker regression and real-interface suite
+        run: python -m pytest tests tools/check_workspace_tabs.py tools/check_reliability_browser.py tools/check_adventures_browser.py -q
+
+  windows:
+    needs: regressions
+    runs-on: windows-2022
+    timeout-minutes: 30
+    env:
+      WORLDWALKER_DATA_DIR: ${{ github.workspace }}/.build-test-data
+      PYTHONUTF8: '1'
+      PYTHONPATH: '${{ github.workspace }}/backend;${{ github.workspace }}/tests;${{ github.workspace }}/tools'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install runtime and build dependencies
+        run: python -m pip install -r requirements.txt "pyinstaller>=6.16,<7" pytest playwright pillow
+      - name: Build portable Windows game
+        run: python -m PyInstaller --noconfirm --clean WorldwalkerRPG.spec
+      - name: Verify packaged game and assemble playable ZIP
+        shell: python
+        run: |
+          import os, shutil, subprocess
+          from pathlib import Path
+          root = Path('dist/WorldwalkerRPG')
+          exe = (root / 'WorldwalkerRPG.exe').resolve()
+          assert exe.is_file(), 'Windows executable is missing'
+          with exe.open('rb') as f:
+              assert f.read(2) == b'MZ', 'Not a Windows executable'
+          subprocess.run([str(exe), '--self-test'], check=True, timeout=90)
+          frontend = root / '_internal' / 'frontend'
+          for relative in ['index.html', 'js/app.js', 'js/action-deck.js', 'js/workspace-tabs.js', 'js/world-atlas.js', 'tactical/campaign.html', 'tactical/campaign.js', 'css/style.css', 'sw.js']:
+              source = Path('frontend') / relative
+              packaged = frontend / relative
+              assert packaged.is_file(), f'Missing bundled file: {relative}'
+              assert packaged.read_bytes() == source.read_bytes(), f'Stale bundled file: {relative}'
+          assert (root / '_internal' / 'offline_mode.py').is_file(), 'Offline resolver missing from packaged runtime'
+          assert (root / '_internal/assets/data/world_calendars.json').read_bytes() == Path('assets/data/world_calendars.json').read_bytes(), 'Calendar data missing or stale'
+          shutil.copytree('music', root / 'music', dirs_exist_ok=True)
+          for name in ['WorldwalkerRPG.exe.config', 'PHONE_PLAY_README.txt', 'WORKSPACE_TABS.md', 'RELIABILITY_UPDATE.md', 'LIVING_ADVENTURES.md', 'WORLD_CALENDARS.md']:
+              if Path(name).is_file(): shutil.copy2(name, root / name)
+          (root / 'Start Phone Mode.bat').write_text('@echo off\r\ncd /d "%~dp0"\r\nstart "" "%~dp0WorldwalkerRPG.exe" --lan\r\n', encoding='utf-8')
+          (root / 'OFFLINE_MODE_README.txt').write_text(
+              'WORLDWALKER RPG - OFFLINE MODE REVIEW BUILD\n\n'
+              '1. Extract the ENTIRE ZIP.\n'
+              '2. Keep the _internal folder beside WorldwalkerRPG.exe.\n'
+              '3. Open WorldwalkerRPG.exe.\n'
+              '4. Offline Mode is enabled by default in this edition. Use Activities instead of free typing.\n'
+              '5. The game uses the same Worldwalker campaign state, Chronicle, Living Map, powers/forms, relationships, organizations and combat systems.\n'
+              '6. Naruto, One Piece and Bleach combat still uses the existing tactical battlefield.\n'
+              '7. You can disable Offline Mode in Settings if you intentionally want to configure an AI provider.\n\n'
+              'No API key or internet connection is required for Offline Mode gameplay.\n', encoding='utf-8')
+          (root / 'BUILD_INFO.txt').write_text(
+              'Worldwalker RPG - Reviewed Native Offline Mode\n'
+              + 'Source commit: ' + os.environ['GITHUB_SHA'] + '\n'
+              + 'Build run: ' + os.environ['GITHUB_RUN_ID'] + '\n'
+              + 'Validation: dedicated offline tests, full Worldwalker regressions, real-interface browser checks, JavaScript syntax, packaged EXE self-test.\n'
+              + 'This executable is unsigned.\n', encoding='utf-8')
+          shutil.make_archive('WorldwalkerRPG-Offline-Reviewed-Windows', 'zip', 'dist', 'WorldwalkerRPG')
+      - name: Upload playable Windows ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: WorldwalkerRPG-Offline-Reviewed-Windows
+          path: WorldwalkerRPG-Offline-Reviewed-Windows.zip
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
