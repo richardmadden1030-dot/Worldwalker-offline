@@ -1,0 +1,34 @@
+name: Apply native Offline Mode patch
+
+on:
+  push:
+    branches:
+      - offline-mode/native-worldwalker
+    paths:
+      - ".offline-patch-ready"
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply reviewed Offline Mode changes
+        shell: bash
+        run: |
+          cat .offline-patch/part* > /tmp/offline-mode.patch
+          git apply --check /tmp/offline-mode.patch
+          git apply /tmp/offline-mode.patch
+          rm -rf .offline-patch .offline-patch-ready
+      - name: Commit reviewed implementation
+        shell: bash
+        run: |
+          git config user.name "worldwalker-offline-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -m "Add native model-free Offline Mode to Worldwalker"
+          git push origin HEAD:offline-mode/native-worldwalker
